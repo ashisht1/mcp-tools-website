@@ -57,8 +57,8 @@ let serverParamValues = {};
 // Initialize Website
 async function init() {
   try {
-    // Fetch dynamic JSON data
-    const response = await fetch('./data.json');
+    // Fetch dynamic JSON data with cache buster
+    const response = await fetch('./data.json?v=' + new Date().getTime());
     if (!response.ok) throw new Error("HTTP error " + response.status);
     const data = await response.json();
     
