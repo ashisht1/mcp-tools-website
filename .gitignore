@@ -1,1 +1,6 @@
 .vercel
+node_modules/
+*.zip
+response.json
+*.log
+trust-policy.json

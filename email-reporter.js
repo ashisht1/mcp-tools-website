@@ -33,10 +33,12 @@ export const handler = async (event) => {
   const smtpUser = process.env.SMTP_USER;
   const smtpPass = process.env.SMTP_PASS;
 
-  if (!smtpHost || !smtpUser || !smtpPass) {
-    const err = "Missing SMTP credentials. Please set SMTP_HOST, SMTP_USER, and SMTP_PASS.";
-    console.error(err);
-    return { statusCode: 500, body: JSON.stringify({ error: err }) };
+  const isPlaceholder = (val) => !val || val === 'PLACEHOLDER';
+
+  if (isPlaceholder(smtpHost) || isPlaceholder(smtpUser) || isPlaceholder(smtpPass)) {
+    const err = "Missing or unconfigured SMTP credentials. Please replace the 'PLACEHOLDER' values with your real SMTP settings in the AWS Lambda Environment Variables.";
+    console.warn(err);
+    return { statusCode: 400, body: JSON.stringify({ error: err, setupRequired: true }) };
   }
 
   // Time calculations
@@ -52,7 +54,7 @@ export const handler = async (event) => {
 
   try {
     // 1. Fetch Vercel Web Analytics (Graceful fallback if no token or project id)
-    if (vercelToken && projectId) {
+    if (!isPlaceholder(vercelToken) && !isPlaceholder(projectId)) {
       console.log("Fetching Vercel Web Analytics...");
       try {
         const analyticsUrl = `https://api.vercel.com/v1/web-analytics/timeseries?projectId=${projectId}&from=${yesterday.toISOString()}&to=${now.toISOString()}`;
@@ -83,7 +85,7 @@ export const handler = async (event) => {
     }
 
     // 2. Fetch Vercel Deployments Status
-    if (vercelToken && projectId) {
+    if (!isPlaceholder(vercelToken) && !isPlaceholder(projectId)) {
       console.log("Fetching Vercel Deployments list...");
       try {
         const deploymentsUrl = `https://api.vercel.com/v6/deployments?projectId=${projectId}&limit=5`;
@@ -115,7 +117,7 @@ export const handler = async (event) => {
     }
 
     // 3. Fetch GitHub Repository Commit updates
-    if (githubToken) {
+    if (!isPlaceholder(githubToken)) {
       console.log("Fetching GitHub Repository commits...");
       try {
         const gitUrl = `https://api.github.com/repos/${githubOwner}/${githubRepo}/commits?since=${yesterday.toISOString()}`;
