@@ -51,6 +51,7 @@
       <div class="page-tabs">
         <button class="page-tab active" data-tab="servers">⚡ MCP Servers</button>
         <button class="page-tab" data-tab="learning">📚 Learning & Resources</button>
+        <button class="page-tab" data-tab="validator">🛠️ Config Validator</button>
       </div>
 
       <!-- Search Container -->
@@ -245,6 +246,51 @@ await server.connect(transport);</code></pre>
       <!-- Resources Grid -->
       <div class="resources-grid" id="resources-grid">
         <!-- Dynamically populated by JS -->
+      </div>
+    </section>
+  </div>
+
+  <!-- Config Validator View (Tab 3) -->
+  <div id="view-validator" class="tab-view container">
+    <section class="resources-explorer-section" style="padding-top:20px;">
+      <div class="generator-layout">
+        <!-- Editor Input Panel (Left) -->
+        <div class="generator-controls glass-panel" style="padding:30px; display:flex; flex-direction:column;">
+          <div class="output-header" style="margin-bottom:16px;">
+            <h3 class="panel-title" style="margin-bottom:0; border:none; padding:0;">Paste your mcp_config.json</h3>
+            <button class="btn btn-secondary btn-sm" id="btn-load-sample" style="font-size:0.75rem;">Load Sample</button>
+          </div>
+          <textarea id="validator-textarea" placeholder='{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your_token"
+      }
+    }
+  }
+}' style="flex-grow:1; width:100%; min-height:400px; background:#04060a; border:1px solid var(--card-border); border-radius:8px; padding:16px; color:#c3e88d; font-family:monospace; font-size:0.85rem; outline:none; resize:vertical; line-height:1.5;"></textarea>
+        </div>
+
+        <!-- Validation Report Panel (Right) -->
+        <div class="generator-output glass-panel" style="padding:30px; display:flex; flex-direction:column;">
+          <h3 class="panel-title">Validation Report</h3>
+          <div id="validator-status-container">
+            <!-- Will render dynamic validation state card -->
+            <div class="validation-alert info" style="display:flex; gap:16px; background:rgba(79, 172, 254, 0.08); border:1px solid rgba(79, 172, 254, 0.2); border-radius:8px; padding:16px;">
+              <span style="font-size:1.5rem; line-height:1.2;">💡</span>
+              <div>
+                <strong style="color:var(--accent-blue); display:block; font-size:0.95rem;">Waiting for input...</strong>
+                <span style="font-size:0.85rem; color:var(--text-secondary); display:block; margin-top:4px;">Paste your configuration JSON in the editor on the left to begin audit.</span>
+              </div>
+            </div>
+          </div>
+          
+          <div style="margin-top:20px; flex-grow:1; display:flex; flex-direction:column; gap:12px;" id="validator-rules-logs">
+            <!-- Audit Checklist items -->
+          </div>
+        </div>
       </div>
     </section>
   </div>

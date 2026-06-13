@@ -30,13 +30,19 @@ const resourceCategorySelect = document.getElementById("resource-category");
 const resourceLevelSelect = document.getElementById("resource-level");
 const costBtns = document.querySelectorAll(".cost-btn");
 
+// Validator Elements
+const validatorTextarea = document.getElementById("validator-textarea");
+const validatorStatusContainer = document.getElementById("validator-status-container");
+const validatorRulesLogs = document.getElementById("validator-rules-logs");
+const btnLoadSample = document.getElementById("btn-load-sample");
+
 // Modal Elements
 const submitBtn = document.querySelector(".submit-btn");
 const submitModal = document.getElementById("submit-modal");
 const modalCloseBtn = document.getElementById("modal-close-btn");
 
 // Application State
-let activeTab = "servers"; // "servers" or "learning"
+let activeTab = "servers"; // "servers", "learning", or "validator"
 let currentCategory = "all";
 let costFilter = "all"; // "all", "free", "paid"
 let resourceCategoryFilter = "all"; // "all", "llm-fundamentals", etc.
@@ -297,6 +303,272 @@ function renderResources() {
   });
 }
 
+// Real-time config validator audit function
+function validateConfigJSON(rawText) {
+  if (!validatorStatusContainer || !validatorRulesLogs) return;
+  
+  const trimmed = rawText.trim();
+  if (trimmed === "") {
+    // Reset to idle/waiting state
+    validatorStatusContainer.innerHTML = `
+      <div class="validation-alert info" style="display:flex; gap:16px; background:rgba(79, 172, 254, 0.08); border:1px solid rgba(79, 172, 254, 0.2); border-radius:8px; padding:16px;">
+        <span style="font-size:1.5rem; line-height:1.2;">💡</span>
+        <div>
+          <strong style="color:var(--accent-blue); display:block; font-size:0.95rem;">Waiting for input...</strong>
+          <span style="font-size:0.85rem; color:var(--text-secondary); display:block; margin-top:4px;">Paste your configuration JSON in the editor on the left to begin audit.</span>
+        </div>
+      </div>
+    `;
+    validatorRulesLogs.innerHTML = "";
+    return;
+  }
+
+  let parsed = null;
+  let parseError = null;
+
+  try {
+    parsed = JSON.parse(trimmed);
+  } catch (err) {
+    parseError = err.message;
+  }
+
+  if (parseError) {
+    // Render JSON parsing syntax error
+    validatorStatusContainer.innerHTML = `
+      <div class="validation-alert error">
+        <span style="font-size:1.5rem; line-height:1.2;">❌</span>
+        <div>
+          <strong>Invalid JSON Format</strong>
+          <span style="font-size:0.85rem; color:var(--text-secondary); display:block; margin-top:4px;">Your code failed to parse. Details: <code>${parseError}</code></span>
+        </div>
+      </div>
+    `;
+    validatorRulesLogs.innerHTML = `
+      <div class="validation-rule fail">
+        <span class="rule-icon">❌</span>
+        <div class="rule-details">
+          <span class="rule-title">Syntax Check Failed</span>
+          <span class="rule-desc">Make sure all double quotes, brackets, and commas match exactly. Trailing commas inside arrays/objects are invalid in JSON.</span>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  // Audited checklist list
+  const rules = [];
+
+  // Rule 1: Check top-level mcpServers key
+  if (parsed && typeof parsed === "object" && !Array.isArray(parsed) && parsed.mcpServers) {
+    rules.push({
+      status: "pass",
+      title: "Top-level 'mcpServers' object found",
+      desc: "Configuration is correctly wrapped inside the required mcpServers parent object."
+    });
+    
+    const servers = parsed.mcpServers;
+    if (typeof servers !== "object" || Array.isArray(servers)) {
+      rules.push({
+        status: "fail",
+        title: "'mcpServers' must be a JSON object",
+        desc: "Found mcpServers, but its value is not a valid map of server definitions."
+      });
+    } else {
+      const serverKeys = Object.keys(servers);
+      if (serverKeys.length === 0) {
+        rules.push({
+          status: "warn",
+          title: "No server configurations declared",
+          desc: "Your config file works, but mcpServers is currently empty. Add at least one server definition."
+        });
+      } else {
+        serverKeys.forEach(key => {
+          const config = servers[key];
+          if (!config || typeof config !== "object" || Array.isArray(config)) {
+            rules.push({
+              status: "fail",
+              title: `Server '${key}' definition is invalid`,
+              desc: `Expected a configuration object for server '${key}', but received a primitive or array.`
+            });
+            return;
+          }
+
+          // Rule 2: Command declared
+          if (config.command) {
+            rules.push({
+              status: "pass",
+              title: `Server '${key}': command specified`,
+              desc: `Executes with command binary: '${config.command}'.`
+            });
+            
+            // Rule 3: check npx -y
+            if (config.command === "npx") {
+              const hasY = config.args && Array.isArray(config.args) && config.args.includes("-y");
+              if (hasY) {
+                rules.push({
+                  status: "pass",
+                  title: `Server '${key}': NPX runs in non-interactive mode`,
+                  desc: "Includes the '-y' flag to bypass package installer prompts."
+                });
+              } else {
+                rules.push({
+                  status: "warn",
+                  title: `Server '${key}': NPX runs without '-y' flag`,
+                  desc: "Tip: Running npx without '-y' might cause your AI agent client (like Claude Desktop) to hang indefinitely waiting for approval prompts."
+                });
+              }
+            }
+          } else {
+            rules.push({
+              status: "fail",
+              title: `Server '${key}': missing command parameter`,
+              desc: "Every active server configuration block must specify a 'command' string."
+            });
+          }
+
+          // Rule 4: Args must be array
+          if (config.args && !Array.isArray(config.args)) {
+            rules.push({
+              status: "fail",
+              title: `Server '${key}': 'args' parameter is not an array`,
+              desc: "The 'args' field must be an array of strings. Received type: " + (typeof config.args)
+            });
+          }
+
+          // Rule 5: Env must be object
+          if (config.env && (typeof config.env !== "object" || Array.isArray(config.env))) {
+            rules.push({
+              status: "fail",
+              title: `Server '${key}': 'env' parameter is not an object`,
+              desc: "The 'env' environment block must be a standard JSON key-value map."
+            });
+          }
+
+          // Rule 6: Specific server variable warnings
+          const normKey = key.toLowerCase();
+          if (normKey.includes("github")) {
+            const hasToken = config.env && config.env.GITHUB_PERSONAL_ACCESS_TOKEN;
+            if (hasToken) {
+              rules.push({
+                status: "pass",
+                title: `Server '${key}': GITHUB_PERSONAL_ACCESS_TOKEN env var detected`,
+                desc: "GitHub credential check passed."
+              });
+            } else {
+              rules.push({
+                status: "warn",
+                title: `Server '${key}': Missing GITHUB_PERSONAL_ACCESS_TOKEN env var`,
+                desc: "Recommendation: The official GitHub MCP server requires GITHUB_PERSONAL_ACCESS_TOKEN to access API endpoints."
+              });
+            }
+          } else if (normKey.includes("slack")) {
+            const hasToken = config.env && config.env.SLACK_BOT_TOKEN;
+            if (hasToken) {
+              rules.push({
+                status: "pass",
+                title: `Server '${key}': SLACK_BOT_TOKEN env var detected`,
+                desc: "Slack credential check passed."
+              });
+            } else {
+              rules.push({
+                status: "warn",
+                title: `Server '${key}': Missing SLACK_BOT_TOKEN env var`,
+                desc: "Recommendation: The official Slack MCP server requires SLACK_BOT_TOKEN to post messages."
+              });
+            }
+          } else if (normKey.includes("postgres")) {
+            const hasUri = config.args && config.args.some(a => typeof a === "string" && a.startsWith("postgresql://"));
+            if (hasUri) {
+              rules.push({
+                status: "pass",
+                title: `Server '${key}': postgresql:// URI argument detected`,
+                desc: "PostgreSQL connection string audit passed."
+              });
+            } else {
+              rules.push({
+                status: "warn",
+                title: `Server '${key}': No postgresql:// URI found in arguments`,
+                desc: "Recommendation: Ensure you pass your DB connection string (postgresql://user:pass@host:5432/db) inside the args list."
+              });
+            }
+          } else if (normKey.includes("filesystem")) {
+            const hasPaths = config.args && config.args.length > 0;
+            if (hasPaths) {
+              rules.push({
+                status: "pass",
+                title: `Server '${key}': folders argument declared`,
+                desc: "Checked directory permissions list."
+              });
+            } else {
+              rules.push({
+                status: "warn",
+                title: `Server '${key}': no directory paths declared in arguments`,
+                desc: "Recommendation: Expose folders by passing one or more absolute paths inside the args array."
+              });
+            }
+          }
+        });
+      }
+    }
+  } else {
+    rules.push({
+      status: "fail",
+      title: "Missing 'mcpServers' top-level key",
+      desc: "A valid configuration must contain a root 'mcpServers' object containing your server definitions."
+    });
+  }
+
+  // Determine overall status
+  const hasFail = rules.some(r => r.status === "fail");
+  const hasWarn = rules.some(r => r.status === "warn");
+
+  if (hasFail) {
+    validatorStatusContainer.innerHTML = `
+      <div class="validation-alert error">
+        <span style="font-size:1.5rem; line-height:1.2;">❌</span>
+        <div>
+          <strong>Audit Failed: Breaking Issues Found</strong>
+          <span style="font-size:0.85rem; color:var(--text-secondary); display:block; margin-top:4px;">Fix the red issues in your configuration JSON to make it valid for MCP clients.</span>
+        </div>
+      </div>
+    `;
+  } else if (hasWarn) {
+    validatorStatusContainer.innerHTML = `
+      <div class="validation-alert warning">
+        <span style="font-size:1.5rem; line-height:1.2;">⚠️</span>
+        <div>
+          <strong>Configuration Valid, with Warnings</strong>
+          <span style="font-size:0.85rem; color:var(--text-secondary); display:block; margin-top:4px;">The JSON structure is valid, but we identified parameters or flags that could cause issues.</span>
+        </div>
+      </div>
+    `;
+  } else {
+    validatorStatusContainer.innerHTML = `
+      <div class="validation-alert success">
+        <span style="font-size:1.5rem; line-height:1.2;">✅</span>
+        <div>
+          <strong>Configuration is Perfect!</strong>
+          <span style="font-size:0.85rem; color:var(--text-secondary); display:block; margin-top:4px;">Excellent. All checks passed. Your mcp_config.json file is fully optimized and ready to deploy.</span>
+        </div>
+      </div>
+    `;
+  }
+
+  // Render logs
+  validatorRulesLogs.innerHTML = rules.map(rule => {
+    const icon = rule.status === "pass" ? "✅" : rule.status === "warn" ? "⚠️" : "❌";
+    return `
+      <div class="validation-rule ${rule.status === "pass" ? "pass" : rule.status === "warn" ? "warn" : "fail"}">
+        <span class="rule-icon">${icon}</span>
+        <div class="rule-details">
+          <span class="rule-title">${rule.title}</span>
+          <span class="rule-desc">${rule.desc}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
 // Render the configuration generator interactive elements
 function renderConfigGenerator() {
   if (!controlsList) return;
@@ -523,11 +795,19 @@ function switchTab(tabName) {
     }
   });
   
-  // Set search placeholder dynamically
+  // Set search placeholder dynamically / manage visible filters
   if (tabName === "servers") {
     searchInput.placeholder = "Search servers (e.g. Postgres, Slack, Kite...)";
-  } else {
+    searchInput.style.display = "block";
+    document.querySelector(".search-icon").style.display = "block";
+  } else if (tabName === "learning") {
     searchInput.placeholder = "Search learning paths, courses, videos...";
+    searchInput.style.display = "block";
+    document.querySelector(".search-icon").style.display = "block";
+  } else {
+    // Hide search input inside Validator tab as it has its own input textarea
+    searchInput.style.display = "none";
+    document.querySelector(".search-icon").style.display = "none";
   }
 
   // Clear search input on tab switch
@@ -560,7 +840,7 @@ function setupEventListeners() {
     searchQuery = e.target.value;
     if (activeTab === "servers") {
       renderServers();
-    } else {
+    } else if (activeTab === "learning") {
       renderResources();
     }
   });
@@ -612,10 +892,38 @@ function setupEventListeners() {
     });
   }
 
+  // Validator interactive triggers
+  if (validatorTextarea) {
+    validatorTextarea.addEventListener("input", (e) => {
+      validateConfigJSON(e.target.value);
+    });
+  }
+
+  if (btnLoadSample) {
+    btnLoadSample.addEventListener("click", () => {
+      const sampleCode = `{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": ""
+      }
+    },
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"]
+    }
+  }
+}`;
+      validatorTextarea.value = sampleCode;
+      validateConfigJSON(sampleCode);
+    });
+  }
+
   // Copy config file action
   if (copyConfigBtn) {
     copyConfigBtn.addEventListener("click", () => {
-      // Strip HTML spans to get raw text string
       const tempElement = document.createElement("div");
       tempElement.innerHTML = jsonPreview.innerHTML;
       const cleanText = tempElement.textContent;
