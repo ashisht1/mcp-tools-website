@@ -8,7 +8,7 @@
       "description": "Allows AI agents to search, view, create, and manage GitHub repositories, issues, pulls, and commits.",
       "command": "npx -y @modelcontextprotocol/server-github",
       "author": "Anthropic",
-      "stars": "1.4k"
+      "stars": "87.2k"
     },
     {
       "id": "postgres",
@@ -18,7 +18,7 @@
       "description": "Enables agents to inspect schemas, execute read-only queries, and analyze PostgreSQL database tables safely.",
       "command": "npx -y @modelcontextprotocol/server-postgres",
       "author": "Anthropic",
-      "stars": "890"
+      "stars": "87.2k"
     },
     {
       "id": "kite",
@@ -38,7 +38,7 @@
       "description": "Integrate Brave Search to allow agents to search the web, fetch search results, and crawl web pages.",
       "command": "npx -y @modelcontextprotocol/server-brave-search",
       "author": "Brave Software",
-      "stars": "1.1k"
+      "stars": "1.2k"
     },
     {
       "id": "fetch",
@@ -48,7 +48,7 @@
       "description": "Exposes tools to download and convert remote HTML pages into clean, agent-readable markdown.",
       "command": "npx -y @modelcontextprotocol/server-fetch",
       "author": "Anthropic",
-      "stars": "760"
+      "stars": "87.2k"
     },
     {
       "id": "slack",
@@ -58,7 +58,7 @@
       "description": "Allows agents to list channels, read conversations, read threads, and post messages to Slack workspaces.",
       "command": "npx -y @modelcontextprotocol/server-slack",
       "author": "Anthropic",
-      "stars": "980"
+      "stars": "67"
     },
     {
       "id": "filesystem",
@@ -68,7 +68,7 @@
       "description": "Enables secure and sandboxed local directory read, write, search, and file information operations.",
       "command": "npx -y @modelcontextprotocol/server-filesystem",
       "author": "Anthropic",
-      "stars": "1.2k"
+      "stars": "87.2k"
     },
     {
       "id": "memory",
@@ -78,7 +78,277 @@
       "description": "Persistent semantic knowledge graph storage using simple files to give agents long-term episodic memory.",
       "command": "npx -y @modelcontextprotocol/server-memory",
       "author": "Anthropic",
-      "stars": "640"
+      "stars": "87.2k"
+    },
+    {
+      "id": "ac-inference-sh-mcp",
+      "name": "inference.sh",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "Run 150+ AI apps — image, video, audio, LLMs, 3D and more. Browse, execute, stream results.",
+      "command": "npx -y ac.inference.sh/mcp",
+      "author": "Community",
+      "stars": "New"
+    },
+    {
+      "id": "ac-tandem-docs-mcp",
+      "name": "docs-mcp",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "Remote MCP server for Tandem docs, install guides, SDKs, workflows, and agent setup help.",
+      "command": "npx -y ac.tandem/docs-mcp",
+      "author": "frumu-ai",
+      "stars": "New"
+    },
+    {
+      "id": "agency-lona-trading",
+      "name": "trading",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "AI-powered trading strategy development: backtesting, market data, and portfolio analysis",
+      "command": "npx -y agency.lona/trading",
+      "author": "mindsightventures",
+      "stars": "New"
+    },
+    {
+      "id": "ai-aarna-atars-mcp",
+      "name": "aTars MCP",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "Crypto market signals, technical indicators, and sentiment analysis for AI agents.",
+      "command": "npx -y ai.aarna/atars-mcp",
+      "author": "Community",
+      "stars": "New"
+    },
+    {
+      "id": "ai-abmeter-abmeter",
+      "name": "ABMeter",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "Feature flagging and A/B testing platform with AI-first experimentation workflows.",
+      "command": "npx -y ai.abmeter/abmeter",
+      "author": "abmeter",
+      "stars": "New"
+    },
+    {
+      "id": "ai-adadvisor-mcp-server",
+      "name": "AdAdvisor MCP Server",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "Query Meta Ads performance data — accounts, campaigns, ad sets, ads, metrics & settings.",
+      "command": "npx -y ai.adadvisor/mcp-server",
+      "author": "Community",
+      "stars": "New"
+    },
+    {
+      "id": "ai-adeu-adeu",
+      "name": "adeu",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "Automated DOCX Redlining Engine",
+      "command": "npx -y ai.adeu/adeu",
+      "author": "dealfluence",
+      "stars": "New"
+    },
+    {
+      "id": "ai-adramp-google-ads",
+      "name": "google-ads",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "Google Ads MCP server — manage campaigns, keywords, and metrics.",
+      "command": "npx -y ai.adramp/google-ads",
+      "author": "stylemi-co",
+      "stars": "New"
+    },
+    {
+      "id": "ai-adweave-meta-ads-mcp",
+      "name": "AdWeave — Meta Ads MCP Server",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "Meta Ads MCP server with 47 tools for campaigns, creatives, audiences, and insights.",
+      "command": "npx -y ai.adweave/meta-ads-mcp",
+      "author": "Community",
+      "stars": "New"
+    },
+    {
+      "id": "ai-agentdm-agentdm",
+      "name": "AgentDM",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "Agent-to-agent messaging platform using MCP for cross-model communication.",
+      "command": "npx -y ai.agentdm/agentdm",
+      "author": "Community",
+      "stars": "New"
+    },
+    {
+      "id": "ai-agentic-news-mcp",
+      "name": "Agentic News",
+      "icon": "🌐",
+      "category": "search",
+      "description": "AI-powered news intelligence — 21 tools for personalized monitoring, briefings, and semantic search",
+      "command": "npx -y ai.agentic-news/mcp",
+      "author": "u00dxk2",
+      "stars": "New"
+    },
+    {
+      "id": "ai-agenticshelf-graffeo",
+      "name": "Graffeo Coffee Roasting",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "Live MCP catalog for Graffeo Coffee Roasting — North Beach SF specialty coffee since 1935.",
+      "command": "npx -y ai.agenticshelf/graffeo",
+      "author": "Community",
+      "stars": "New"
+    },
+    {
+      "id": "ai-agenticshelf-mcp",
+      "name": "Agentic Shelf",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "Hosted MCP for e-commerce: live product catalog, stock, and pricing for AI agents.",
+      "command": "npx -y ai.agenticshelf/mcp",
+      "author": "vboykoCTO",
+      "stars": "New"
+    },
+    {
+      "id": "ai-agenticterminal-directory",
+      "name": "Agentic Terminal Directory",
+      "icon": "🌐",
+      "category": "search",
+      "description": "Verified merchants accepting agentic payments on Lightning/L402/BOLT12/USDT — search, verify, pay.",
+      "command": "npx -y ai.agenticterminal/directory",
+      "author": "observer-protocol",
+      "stars": "New"
+    },
+    {
+      "id": "ai-agentrapay-agentra",
+      "name": "agentra",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "Identity oracle and trust layer for autonomous AI agents. Bidirectional KYA and trust scoring.",
+      "command": "npx -y ai.agentrapay/agentra",
+      "author": "Community",
+      "stars": "New"
+    },
+    {
+      "id": "ai-agenttrust-mcp-server",
+      "name": "AgentTrust — Identity & Trust for A2A Agents",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "Identity, trust, and A2A orchestration for autonomous AI agents. Official A2A partner.",
+      "command": "npx -y @agenttrust/mcp-server",
+      "author": "agenttrust",
+      "stars": "New"
+    },
+    {
+      "id": "ai-aient-mcp",
+      "name": "mcp",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "MCP-native AI SRE: ask what's broken in production, get a reviewed GitHub fix PR.",
+      "command": "npx -y ai.aient/mcp",
+      "author": "haf",
+      "stars": "New"
+    },
+    {
+      "id": "ai-aliengiraffe-spotdb",
+      "name": "spotdb",
+      "icon": "🗄️",
+      "category": "databases",
+      "description": "Ephemeral data sandbox for AI workflows with guardrails and security",
+      "command": "npx -y ai.aliengiraffe/spotdb",
+      "author": "aliengiraffe",
+      "stars": "New"
+    },
+    {
+      "id": "ai-alphacreek-alphacreek-mcp",
+      "name": "AlphaCreek MCP",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "Access SEC filings efficiently, save time and tokens, and get cited answers.",
+      "command": "npx -y ai.alphacreek/alphacreek-mcp",
+      "author": "Community",
+      "stars": "New"
+    },
+    {
+      "id": "ai-alpic-mcp-alpic-mcp",
+      "name": "Alpic",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "Manage your projects, debug deployment, and check analytics for any MCP server you host with Alpic",
+      "command": "npx -y ai.alpic.mcp/alpic-mcp",
+      "author": "Community",
+      "stars": "New"
+    },
+    {
+      "id": "ai-alpic-test-test-mcp-server",
+      "name": "test-mcp-server",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "Alpic Test MCP Server - great server!",
+      "command": "npx -y ai.alpic.test/test-mcp-server",
+      "author": "Community",
+      "stars": "New"
+    },
+    {
+      "id": "ai-ankimcp-anki-mcp-server",
+      "name": "Anki MCP Server",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "MCP server for Anki flashcards: adaptive review, notes, media, and deck management via AnkiConnect.",
+      "command": "npx -y @ankimcp/anki-mcp-server",
+      "author": "ankimcp",
+      "stars": "New"
+    },
+    {
+      "id": "ai-ankimcp-anki-mcp-server-addon",
+      "name": "AnkiMCP Server",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "Anki addon that exposes your flashcard collection to AI assistants via a local MCP server.",
+      "command": "npx -y ai.ankimcp/anki-mcp-server-addon",
+      "author": "ankimcp",
+      "stars": "New"
+    },
+    {
+      "id": "ai-anomalyarmor-armor-mcp",
+      "name": "AnomalyArmor",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "Data observability tools for engineering teams: alerts, freshness, schema drift, lineage, quality.",
+      "command": "npx -y ai.anomalyarmor/armor-mcp",
+      "author": "anomalyarmor",
+      "stars": "New"
+    },
+    {
+      "id": "ai-anzenna-anzenna",
+      "name": "anzenna",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "MCP server for Anzenna",
+      "command": "npx -y ai.anzenna/anzenna",
+      "author": "Community",
+      "stars": "New"
+    },
+    {
+      "id": "ai-appdeploy-deploy-app",
+      "name": "AppDeploy",
+      "icon": "🌐",
+      "category": "search",
+      "description": "AppDeploy turns app ideas described in AI chat into live full-stack web applications",
+      "command": "npx -y ai.appdeploy/deploy-app",
+      "author": "Community",
+      "stars": "New"
+    },
+    {
+      "id": "ai-arclan-registry",
+      "name": "Arclan MCP Registry",
+      "icon": "🛠️",
+      "category": "utilities",
+      "description": "MCP server registry — validated by live handshake, scored on reliability, monitored continuously.",
+      "command": "npx -y ai.arclan/registry",
+      "author": "Community",
+      "stars": "New"
     }
   ],
   "learningResources": [
@@ -88,7 +358,7 @@
       "type": "documentation",
       "cost": "free",
       "price": 0,
-      "rating": 5.0,
+      "rating": 5,
       "reviewCount": 382,
       "description": "The official protocol documentation, schemas, and API specification for building MCP clients and servers.",
       "url": "https://modelcontextprotocol.io",
@@ -117,7 +387,7 @@
       "title": "Advanced Agent Orchestration Masterclass",
       "type": "course",
       "cost": "paid",
-      "price": 149.00,
+      "price": 149,
       "rating": 4.9,
       "reviewCount": 88,
       "description": "Cohort-based advanced training on designing secure custom filesystem and database adapters for AI agent teams.",
