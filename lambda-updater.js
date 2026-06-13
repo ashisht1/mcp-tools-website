@@ -218,25 +218,39 @@ export const handler = async (event) => {
       updateLogs.push("Successfully committed updates to repository. Vercel auto-deployment triggered.");
       
       // Wait for Vercel deployment and run validation
-      console.log("Waiting 30 seconds for Vercel to build and serve new portal...");
-      await new Promise(resolve => setTimeout(resolve, 30000));
+      console.log("Starting polling verification for Vercel auto-deployment...");
       
-      // Perform validation check on live website
-      console.log("Verifying live site mcptools.dev...");
-      try {
-        const verifyRes = await fetch("https://mcptools.dev");
-        if (verifyRes.ok) {
-          const html = await verifyRes.text();
-          if (html.includes("index.html") || html.includes("MCP") || html.includes("mcpServers")) {
-            validationReport = "SUCCESS: Live website is online, parsing correctly, and serving registry tools.";
-          } else {
-            validationReport = "WARNING: Site is online but index signature check failed.";
+      const targetToolId = newToolsAdded[0]?.id; // e.g., 'spotdb'
+      let verified = false;
+      let attempts = 15; // 15 attempts * 10 seconds = 150 seconds (2.5 minutes)
+      
+      while (attempts > 0 && !verified) {
+        console.log(`Polling live data.json... (Attempts remaining: ${attempts})`);
+        try {
+          const liveDataRes = await fetch(`https://mcptools.dev/data.json?cb=${Date.now()}`);
+          if (liveDataRes.ok) {
+            const liveData = await liveDataRes.json();
+            const liveIds = new Set(liveData.mcpRegistry.map(s => s.id));
+            
+            if (!targetToolId || liveIds.has(targetToolId)) {
+              console.log("Live data.json update verified successfully!");
+              verified = true;
+              break;
+            }
           }
-        } else {
-          validationReport = `ERROR: Live site verification returned HTTP Status ${verifyRes.status}`;
+        } catch (e) {
+          console.warn("Polling request failed, retrying...", e.message);
         }
-      } catch (err) {
-        validationReport = `ERROR: Failed to contact mcptools.dev: ${err.message}`;
+        attempts--;
+        if (!verified && attempts > 0) {
+          await new Promise(resolve => setTimeout(resolve, 10000)); // Sleep 10s
+        }
+      }
+
+      if (verified) {
+        validationReport = `SUCCESS: Website updated successfully. Verified that new content (including server '${targetToolId}') is live on mcptools.dev.`;
+      } else {
+        validationReport = `WARNING: Deployment timeout. The changes were committed, but after 2.5 minutes, the new tools (like '${targetToolId}') did not appear live on mcptools.dev. Please check Vercel builds for errors.`;
       }
     } else {
       console.log("No new updates found.");
