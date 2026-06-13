@@ -1,0 +1,12 @@
+{
+  "name": "mcp-tools-website",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "MCP Hub portal and AWS Lambda automation utilities.",
+  "scripts": {
+    "validate": "node validate.js"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.13"
+  }
+}
