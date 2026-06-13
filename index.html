@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCP Hub | The Ultimate Model Context Protocol Registry</title>
+  <meta name="description" content="Discover, search, and dynamically generate mcp_config.json configurations for the best Model Context Protocol (MCP) servers and learning resources.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Animated Glowing Background Dots & Lines -->
+  <div class="bg-grid-overlay"></div>
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="header-container container">
+      <div class="logo">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-text">MCP<span class="text-gradient">Hub</span></span>
+      </div>
+      <nav>
+        <a href="#servers-explorer" class="nav-link tab-nav-link" id="nav-explore-servers">Explore Servers</a>
+        <a href="#config-generator" class="nav-link tab-nav-link" id="nav-config-generator">Config Generator</a>
+        <a href="#quickstart" class="nav-link tab-nav-link" id="nav-quickstart">Build Server</a>
+        <a href="https://github.com/ashisht1/mcp-tools-website" target="_blank" rel="noopener" class="nav-link">GitHub 🐙</a>
+        <a href="#submit" class="btn btn-secondary submit-btn">Submit Server</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container text-center">
+      <div class="badge">Model Context Protocol Registry</div>
+      <h1 class="hero-title">Connect LLMs to the <span class="text-gradient">Real World</span></h1>
+      <p class="hero-subtitle">
+        Explore production-ready MCP servers, generate configuration files, and access the best learning resources to build intelligent agent workflows.
+      </p>
+
+      <!-- Main Navigation Tabs -->
+      <div class="page-tabs">
+        <button class="page-tab active" data-tab="servers">⚡ MCP Servers</button>
+        <button class="page-tab" data-tab="learning">📚 Learning & Resources</button>
+      </div>
+
+      <!-- Search Container -->
+      <div class="search-container">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Search servers (e.g. Postgres, Slack, Kite...)" autocomplete="off">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Servers View (Tab 1) -->
+  <div id="view-servers" class="tab-view active">
+    <!-- Servers Explorer Section -->
+    <section id="servers-explorer" class="explorer-section container">
+      <div class="section-header">
+        <h2 class="section-title">Explore Servers</h2>
+        <div class="category-filters" id="category-filters">
+          <button class="filter-btn active" data-category="all">All Tools</button>
+          <button class="filter-btn" data-category="databases">Databases</button>
+          <button class="filter-btn" data-category="apis">APIs & Chat</button>
+          <button class="filter-btn" data-category="search">Search & Web</button>
+          <button class="filter-btn" data-category="utilities">Utilities</button>
+        </div>
+      </div>
+
+      <!-- Server Grid -->
+      <div class="server-grid" id="server-grid">
+        <!-- Cards will be dynamically rendered by JS -->
+      </div>
+    </section>
+
+    <!-- Dynamic Configuration Generator Section -->
+    <section id="config-generator" class="generator-section">
+      <div class="container">
+        <div class="section-title-wrap text-center">
+          <div class="badge">Config Builder</div>
+          <h2>Interactive <span class="text-gradient">mcp_config.json</span> Builder</h2>
+          <p class="section-subtitle">Select the tools you want to use, customize their configuration arguments, and copy the unified configuration file directly into your agent setup.</p>
+        </div>
+
+        <div class="generator-layout">
+          <!-- Configuration Controls (Left) -->
+          <div class="generator-controls glass-panel">
+            <h3 class="panel-title">1. Select & Configure Servers</h3>
+            <div class="controls-list" id="controls-list">
+              <!-- Dynamically populated checkboxes and inputs -->
+            </div>
+          </div>
+
+          <!-- JSON Output Preview (Right) -->
+          <div class="generator-output glass-panel">
+            <div class="output-header">
+              <h3 class="panel-title">2. Live config file</h3>
+              <button class="btn btn-secondary btn-sm copy-config-btn" id="copy-config-btn">
+                <span class="btn-icon">📋</span> Copy Configuration
+              </button>
+            </div>
+            <div class="code-container">
+              <pre><code id="json-preview">// Configuration will generate here...</code></pre>
+            </div>
+            <div class="config-instructions">
+              <h4>💡 How to Use:</h4>
+              <p>Save this code as <code>mcp_config.json</code> in your local app configuration directory (e.g., <code>~/Library/Application Support/Antigravity/mcp_config.json</code> or your Claude Desktop config folder).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Start Guide -->
+    <section id="quickstart" class="quickstart-section container">
+      <div class="glass-panel quickstart-panel">
+        <div class="quickstart-grid">
+          <div class="quickstart-content">
+            <div class="badge">Developer Guide</div>
+            <h2>Build Your Own <span class="text-gradient">MCP Server</span></h2>
+            <p>Writing custom MCP servers is simple. Create integrations in Node.js or Python to give your AI workspace access to proprietary systems and APIs.</p>
+            
+            <div class="step-list">
+              <div class="step-item">
+                <div class="step-num">1</div>
+                <div>
+                  <strong>Install the SDK:</strong> Start by installing the model-context-protocol client/server library.
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">2</div>
+                <div>
+                  <strong>Define Tools:</strong> Register tool functions, descriptions, and parameter schemas.
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">3</div>
+                <div>
+                  <strong>Expose Endpoints:</strong> Read/write inputs over stdio or HTTP endpoints.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="quickstart-code">
+            <div class="code-header">
+              <span class="code-title">server.js (Node.js SDK)</span>
+              <button class="btn-copy-code" data-copy-target="node-sdk-code">Copy</button>
+            </div>
+            <div class="code-container">
+              <pre><code id="node-sdk-code">import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+
+// Initialize server
+const server = new Server({
+  name: "custom-mcp-server",
+  version: "1.0.0"
+}, {
+  capabilities: { tools: {} }
+});
+
+// Define a tool
+server.setRequestHandler(ListToolsRequestSchema, async () => ({
+  tools: [{
+    name: "calculate_metric",
+    description: "Computes custom business analytics",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string" }
+      },
+      required: ["id"]
+    }
+  }]
+}));
+
+// Connect standard input/output transport
+const transport = new StdioServerTransport();
+await server.connect(transport);</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Learning Paths & Resources View (Tab 2) -->
+  <div id="view-learning" class="tab-view container">
+    <section class="resources-explorer-section">
+      <div class="resources-filter-bar glass-panel">
+        <!-- Free vs Paid filter -->
+        <div class="filter-group">
+          <span class="filter-label">Cost:</span>
+          <div class="cost-toggles">
+            <button class="cost-btn active" data-cost="all">All</button>
+            <button class="cost-btn" data-cost="free">Free</button>
+            <button class="cost-btn" data-cost="paid">Paid</button>
+          </div>
+        </div>
+
+        <!-- Topic Category filter -->
+        <div class="filter-group">
+          <span class="filter-label">Topic:</span>
+          <select id="resource-category" class="sort-select">
+            <option value="all">All Topics</option>
+            <option value="llm-fundamentals">LLM Fundamentals</option>
+            <option value="agent-orchestration">Agent Orchestration</option>
+            <option value="custom-mcp">Custom MCP Dev</option>
+          </select>
+        </div>
+
+        <!-- Experience Level filter -->
+        <div class="filter-group">
+          <span class="filter-label">Level:</span>
+          <select id="resource-level" class="sort-select">
+            <option value="all">All Levels</option>
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </div>
+
+        <!-- Sort Selectors -->
+        <div class="filter-group">
+          <span class="filter-label">Sort By:</span>
+          <select id="resource-sort" class="sort-select">
+            <option value="rating">Highest Reviews ⭐️</option>
+            <option value="price-asc">Price: Low to High 📈</option>
+            <option value="price-desc">Price: High to Low 📉</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Resources Grid -->
+      <div class="resources-grid" id="resources-grid">
+        <!-- Dynamically populated by JS -->
+      </div>
+    </section>
+  </div>
+
+  <!-- Submit Server Modal -->
+  <div class="modal-overlay" id="submit-modal">
+    <div class="modal-content glass-panel">
+      <button class="modal-close" id="modal-close-btn">&times;</button>
+      <h2>Submit Your <span class="text-gradient">MCP Server</span></h2>
+      <p class="modal-subtitle">Share your custom server with the developer community.</p>
+      
+      <form class="submit-form" id="submit-form" onsubmit="event.preventDefault(); alert('Success! Your submission is in review.'); document.getElementById('submit-modal').classList.remove('active');">
+        <div class="form-group">
+          <label for="tool-name">Server Name *</label>
+          <input type="text" id="tool-name" placeholder="e.g. Postgres MCP Server" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="tool-category">Category *</label>
+            <select id="tool-category" required>
+              <option value="databases">Databases</option>
+              <option value="apis">APIs & Chat</option>
+              <option value="search">Search & Web</option>
+              <option value="utilities">Utilities</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="tool-repo">GitHub Repository *</label>
+            <input type="url" id="tool-repo" placeholder="https://github.com/username/repo" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="tool-command">Run Command / Command Line *</label>
+          <input type="text" id="tool-command" placeholder="npx -y @modelcontextprotocol/server-postgres" required>
+        </div>
+        <div class="form-group">
+          <label for="tool-desc">Short Description *</label>
+          <textarea id="tool-desc" rows="3" placeholder="Provide a brief explanation of the capabilities and tools exposed by this server." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Submit for Review</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast-notification">Configuration copied to clipboard!</div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-content text-center">
+      <p>&copy; 2026 MCP Hub Registry. Built for AI engineers and developers.</p>
+      <div class="footer-links">
+        <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">Protocol Specification</a> &bull; 
+        <a href="https://github.com/modelcontextprotocol" target="_blank" rel="noopener">Official SDKs</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JS Logic -->
+  <script src="app.js"></script>
+</body>
+</html>

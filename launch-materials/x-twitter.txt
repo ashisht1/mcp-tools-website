@@ -1,0 +1,14 @@
+Tweet Draft:
+
+Set up your Model Context Protocol (MCP) servers in seconds. 🚀
+
+I built http://mcptools.dev — a clean registry, live config builder, and curated learning resource directory for AI agents.
+
+⚡ 1-click config copies
+🎨 Live syntax highlighted builder
+📚 Filterable learning paths (by level & topic)
+🛠️ Open source: https://github.com/ashisht1/mcp-tools-website
+
+Feedbacks welcome! 👇
+
+#ModelContextProtocol #AIagents #LLM #developer

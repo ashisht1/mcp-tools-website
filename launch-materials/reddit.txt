@@ -1,0 +1,27 @@
+Title: I built a tool directory and config generator for MCP (mcptools.dev)
+
+Subreddits to target:
+- r/LocalLLaMA
+- r/chatgptcoders
+- r/cursor
+- r/cline
+
+Post Body:
+Hey everyone,
+
+With Model Context Protocol (MCP) growing fast, I noticed how tedious it is to manually look up CLI command args and assemble the `mcp_config.json` block for different LLM client setups (like Cursor, Cline, or Claude Desktop).
+
+To help make this easier, I built https://mcptools.dev
+
+Features:
+- **Registry Grid**: Quick list of popular servers with installation snippets.
+- **Direct Card Config Copies**: A one-click button on each server card to copy its default config block (e.g. Postgres connection string format).
+- **Interactive JSON Builder**: Select multiple servers, input your variables, and see your unified configuration file update with full IDE-style color syntax highlighting in real-time.
+- **Learning Directory**: Decoupled database of courses, videos, and documentation tagged by topic and difficulty level (Beginner, Intermediate, Advanced).
+
+The site is built as a static site (no heavy JavaScript framework bloat) and is open source. 
+
+If you want to add a server or learning path, feel free to open a PR on the GitHub repo:
+https://github.com/ashisht1/mcp-tools-website
+
+Let me know what servers or resources you think are missing!

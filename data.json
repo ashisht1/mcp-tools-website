@@ -1,0 +1,161 @@
+{
+  "mcpRegistry": [
+    {
+      "id": "github",
+      "name": "GitHub",
+      "icon": "🐙",
+      "category": "apis",
+      "description": "Allows AI agents to search, view, create, and manage GitHub repositories, issues, pulls, and commits.",
+      "command": "npx -y @modelcontextprotocol/server-github",
+      "author": "Anthropic",
+      "stars": "1.4k"
+    },
+    {
+      "id": "postgres",
+      "name": "PostgreSQL",
+      "icon": "🐘",
+      "category": "databases",
+      "description": "Enables agents to inspect schemas, execute read-only queries, and analyze PostgreSQL database tables safely.",
+      "command": "npx -y @modelcontextprotocol/server-postgres",
+      "author": "Anthropic",
+      "stars": "890"
+    },
+    {
+      "id": "kite",
+      "name": "Kite Connect",
+      "icon": "📈",
+      "category": "apis",
+      "description": "MCP server integration for Zerodha Kite Connect APIs, allowing agents to fetch holdings, margins, positions, and live quotes.",
+      "command": "npx -y mcp-remote https://mcp.kite.trade/mcp",
+      "author": "Kite Trade",
+      "stars": "450"
+    },
+    {
+      "id": "brave-search",
+      "name": "Brave Search",
+      "icon": "🦁",
+      "category": "search",
+      "description": "Integrate Brave Search to allow agents to search the web, fetch search results, and crawl web pages.",
+      "command": "npx -y @modelcontextprotocol/server-brave-search",
+      "author": "Brave Software",
+      "stars": "1.1k"
+    },
+    {
+      "id": "fetch",
+      "name": "Fetch Web Reader",
+      "icon": "📄",
+      "category": "search",
+      "description": "Exposes tools to download and convert remote HTML pages into clean, agent-readable markdown.",
+      "command": "npx -y @modelcontextprotocol/server-fetch",
+      "author": "Anthropic",
+      "stars": "760"
+    },
+    {
+      "id": "slack",
+      "name": "Slack Integration",
+      "icon": "💬",
+      "category": "apis",
+      "description": "Allows agents to list channels, read conversations, read threads, and post messages to Slack workspaces.",
+      "command": "npx -y @modelcontextprotocol/server-slack",
+      "author": "Anthropic",
+      "stars": "980"
+    },
+    {
+      "id": "filesystem",
+      "name": "Local Filesystem",
+      "icon": "📁",
+      "category": "utilities",
+      "description": "Enables secure and sandboxed local directory read, write, search, and file information operations.",
+      "command": "npx -y @modelcontextprotocol/server-filesystem",
+      "author": "Anthropic",
+      "stars": "1.2k"
+    },
+    {
+      "id": "memory",
+      "name": "Memory Graph",
+      "icon": "🧠",
+      "category": "utilities",
+      "description": "Persistent semantic knowledge graph storage using simple files to give agents long-term episodic memory.",
+      "command": "npx -y @modelcontextprotocol/server-memory",
+      "author": "Anthropic",
+      "stars": "640"
+    }
+  ],
+  "learningResources": [
+    {
+      "id": "mcp-docs",
+      "title": "Official Model Context Protocol Specification",
+      "type": "documentation",
+      "cost": "free",
+      "price": 0,
+      "rating": 5.0,
+      "reviewCount": 382,
+      "description": "The official protocol documentation, schemas, and API specification for building MCP clients and servers.",
+      "url": "https://modelcontextprotocol.io",
+      "author": "Anthropic",
+      "badge": "Official",
+      "level": "beginner",
+      "courseCategory": "llm-fundamentals"
+    },
+    {
+      "id": "mcp-udemy",
+      "title": "Mastering MCP: Build AI Agent Tool Integrations",
+      "type": "course",
+      "cost": "paid",
+      "price": 19.99,
+      "rating": 4.8,
+      "reviewCount": 142,
+      "description": "Step-by-step video tutorials for using Node.js and Python SDKs to create tool bindings and servers for LLMs.",
+      "url": "https://www.udemy.com/topic/artificial-intelligence/?sub1=mcptools_affiliate",
+      "author": "AI Academy",
+      "badge": "Bestseller",
+      "level": "intermediate",
+      "courseCategory": "custom-mcp"
+    },
+    {
+      "id": "mcp-maven",
+      "title": "Advanced Agent Orchestration Masterclass",
+      "type": "course",
+      "cost": "paid",
+      "price": 149.00,
+      "rating": 4.9,
+      "reviewCount": 88,
+      "description": "Cohort-based advanced training on designing secure custom filesystem and database adapters for AI agent teams.",
+      "url": "https://maven.com/?utm_source=mcptools_aff",
+      "author": "Orchestra AI",
+      "badge": "Premium",
+      "level": "advanced",
+      "courseCategory": "agent-orchestration"
+    },
+    {
+      "id": "mcp-youtube",
+      "title": "MCP Quick-Start: Cline, Cursor & Claude Desktop",
+      "type": "video",
+      "cost": "free",
+      "price": 0,
+      "rating": 4.6,
+      "reviewCount": 219,
+      "description": "A fast-paced YouTube guide on setting up custom servers in your local IDE config files to read folders.",
+      "url": "https://youtube.com",
+      "author": "DevTutorials",
+      "badge": "Popular",
+      "level": "beginner",
+      "courseCategory": "llm-fundamentals"
+    },
+    {
+      "id": "mcp-devto",
+      "title": "Building Custom SDK Adapters from Scratch",
+      "type": "tutorial",
+      "cost": "free",
+      "price": 0,
+      "rating": 4.7,
+      "reviewCount": 54,
+      "description": "A comprehensive blog post on integrating third-party REST APIs into standard Model Context Protocol structures.",
+      "url": "https://dev.to",
+      "author": "CodeCraft",
+      "badge": "New",
+      "level": "intermediate",
+      "courseCategory": "custom-mcp"
+    }
+  ]
+}

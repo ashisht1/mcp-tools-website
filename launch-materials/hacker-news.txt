@@ -1,0 +1,19 @@
+Show HN: MCPTools.dev – Registry, Config Builder, and Learning Paths for MCP
+
+Link: https://mcptools.dev
+
+Description/Comment text:
+Hi HN!
+
+I built MCPTools.dev to solve a personal pain point: editing, formatting, and gathering configurations for Model Context Protocol (MCP) servers.
+
+It includes:
+1. An interactive config generator that color-codes your unified mcp_config.json block in real-time.
+2. Direct "Copy JSON" configuration blocks for top servers (GitHub, Postgres, Slack, Kite) so you don't have to write templates from scratch.
+3. A curated index of free/paid learning paths (classified by topic and experience level).
+
+It is built on pure static HTML/CSS/JS (no heavy framework overhead) and is fully open source. 
+
+Would love your feedback on what features or servers you'd like added next!
+
+GitHub Repository: https://github.com/ashisht1/mcp-tools-website
