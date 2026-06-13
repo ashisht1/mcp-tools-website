@@ -349,6 +349,56 @@
       "command": "npx -y ai.arclan/registry",
       "author": "Community",
       "stars": "New"
+    },
+    {
+      "id": "e2b",
+      "name": "E2B Sandboxed Execution",
+      "icon": "📦",
+      "category": "utilities",
+      "description": "Secure cloud development environments for AI agents. Enables safe, isolated code execution and terminal operations in sandboxed containers.",
+      "command": "npx -y @e2b/mcp-server",
+      "author": "e2b-dev",
+      "stars": "New"
+    },
+    {
+      "id": "neon",
+      "name": "Neon Database",
+      "icon": "🐘",
+      "category": "databases",
+      "description": "Neon MCP Server. Allows natural language interactions with Neon for serverless Postgres database management, schema creation, and SQL execution.",
+      "command": "npx -y @neondatabase/mcp-server-neon",
+      "author": "neondatabase",
+      "stars": "New"
+    },
+    {
+      "id": "qdrant",
+      "name": "Qdrant Vector DB",
+      "icon": "🔎",
+      "category": "databases",
+      "description": "MCP server integration for storing and retrieving semantic knowledge and document memories in the Qdrant vector search engine.",
+      "command": "uvx mcp-server-qdrant",
+      "author": "qdrant",
+      "stars": "New"
+    },
+    {
+      "id": "gitingest",
+      "name": "Gitingest",
+      "icon": "🐙",
+      "category": "utilities",
+      "description": "Gitingest integration providing prompt-friendly codebase summaries, directory trees, and file contents of GitHub repositories.",
+      "command": "npx -y @puravparab/gitingest-mcp",
+      "author": "puravparab",
+      "stars": "New"
+    },
+    {
+      "id": "videodb",
+      "name": "VideoDB Toolkit",
+      "icon": "🎥",
+      "category": "utilities",
+      "description": "Store, index, search, and stream videos using AI to automatically tag scenes, generate transcripts, and retrieve moments.",
+      "command": "npx -y @videodb/mcp-server",
+      "author": "video-db",
+      "stars": "New"
     }
   ],
   "learningResources": [
@@ -486,6 +536,36 @@
       "badge": "New",
       "level": "intermediate",
       "courseCategory": "custom-mcp"
+    },
+    {
+      "id": "microsoft-mcp-beginners",
+      "title": "Microsoft: MCP for Beginners",
+      "type": "course",
+      "cost": "free",
+      "price": 0,
+      "rating": 4.9,
+      "reviewCount": 210,
+      "description": "Microsoft's official open-source curriculum for MCP, providing cross-language examples in .NET (C#), Java, TypeScript, Rust, and Python.",
+      "url": "https://github.com/microsoft/mcp-for-beginners",
+      "author": "Microsoft",
+      "badge": "Featured",
+      "level": "beginner",
+      "courseCategory": "llm-fundamentals"
+    },
+    {
+      "id": "mcp-shawhint",
+      "title": "ShawhinT: Model Context Protocol (MCP) Explained in 20 Minutes",
+      "type": "video",
+      "cost": "free",
+      "price": 0,
+      "rating": 4.8,
+      "reviewCount": 104,
+      "description": "Learn what MCP is, why it is crucial for AI tool-use, and walk through building a Python-based server step-by-step.",
+      "url": "https://www.youtube.com/@ShawhinT",
+      "author": "ShawhinT",
+      "badge": "Popular",
+      "level": "beginner",
+      "courseCategory": "llm-fundamentals"
     }
   ]
 }
