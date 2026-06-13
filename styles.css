@@ -1104,6 +1104,7 @@ footer {
 .card-actions .card-install {
   flex-grow: 1;
   margin-bottom: 0;
+  min-width: 0;
 }
 
 .btn-card-action {
