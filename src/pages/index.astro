@@ -1,0 +1,1434 @@
+---
+import Layout from '../layouts/Layout.astro';
+import data from '../../data.json';
+
+const mcpRegistry = data.mcpRegistry;
+const learningResources = data.learningResources;
+
+// Map category IDs to user-friendly titles
+const categoryMap = {
+  "llm-fundamentals": "LLM Fundamentals",
+  "agent-orchestration": "Agent Orchestration",
+  "custom-mcp": "Custom MCP Dev"
+};
+---
+
+<Layout 
+  title="MCP Hub | The Ultimate Model Context Protocol Registry" 
+  description="Discover, search, and dynamically generate mcp_config.json configurations for the best Model Context Protocol (MCP) servers and learning resources."
+  canonicalUrl="https://mcptools.dev"
+>
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container text-center">
+      <div class="badge">Model Context Protocol Registry</div>
+      <h1 class="hero-title">Connect LLMs to the <span class="text-gradient">Real World</span></h1>
+      <p class="hero-subtitle">
+        Explore production-ready MCP servers, generate configuration files, and access the best learning resources to build intelligent agent workflows.
+      </p>
+
+      <!-- Main Navigation Tabs -->
+      <div class="page-tabs" role="tablist" aria-label="Registry Sections">
+        <button class="page-tab active" data-tab="servers" role="tab" aria-selected="true" aria-controls="view-servers" id="tab-servers"><span role="img" aria-hidden="true">⚡</span> MCP Servers</button>
+        <button class="page-tab" data-tab="learning" role="tab" aria-selected="false" aria-controls="view-learning" id="tab-learning"><span role="img" aria-hidden="true">📚</span> Learning & Resources</button>
+        <button class="page-tab" data-tab="validator" role="tab" aria-selected="false" aria-controls="view-validator" id="tab-validator"><span role="img" aria-hidden="true">🛠️</span> Config Validator</button>
+      </div>
+
+      <!-- Search Container -->
+      <div class="search-container">
+        <div class="search-box">
+          <span class="search-icon" role="img" aria-hidden="true">🔍</span>
+          <label for="search-input" class="sr-only">Search servers or resources</label>
+          <input type="text" id="search-input" placeholder="Search servers (e.g. Postgres, Slack, Kite...)" autocomplete="off">
+        </div>
+      </div>
+      <!-- Screen reader search results announcements -->
+      <div id="search-results-announcer" class="sr-only" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- Servers View (Tab 1) -->
+  <div id="view-servers" class="tab-view active" role="tabpanel" aria-labelledby="tab-servers" tabindex="0">
+    <!-- Servers Explorer Section -->
+    <section id="servers-explorer" class="explorer-section container">
+      <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+        <h2 class="section-title">Explore Servers</h2>
+        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+          <div class="category-filters" id="category-filters">
+            <button class="filter-btn active" data-category="all">All Tools</button>
+            <button class="filter-btn" data-category="databases">Databases</button>
+            <button class="filter-btn" data-category="apis">APIs & Chat</button>
+            <button class="filter-btn" data-category="search">Search & Web</button>
+            <button class="filter-btn" data-category="utilities">Utilities</button>
+          </div>
+          <div class="layout-toggles" id="layout-toggles" style="display: flex; background: rgba(20, 27, 41, 0.75); border: 1px solid var(--card-border); padding: 4px; border-radius: 8px; gap: 4px;">
+            <button class="layout-btn active" data-layout="grid" title="Grid View" style="background: none; border: none; color: var(--text-secondary); padding: 6px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 0.85rem; font-family: var(--font-title); transition: var(--transition-smooth);">
+              🎴 Grid
+            </button>
+            <button class="layout-btn" data-layout="list" title="List View" style="background: none; border: none; color: var(--text-secondary); padding: 6px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 0.85rem; font-family: var(--font-title); transition: var(--transition-smooth);">
+              ☰ List
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Server Grid (Pre-rendered for SEO) -->
+      <div class="server-grid" id="server-grid">
+        {mcpRegistry.map((server, idx) => (
+          <div 
+            class="server-card glass-panel" 
+            data-server-id={server.id} 
+            data-category={server.category}
+            style={idx >= 12 ? "display: none;" : ""}
+          >
+            <div class="card-top">
+              <div class="card-title-wrap">
+                <span class="card-icon" role="img" aria-hidden="true">{server.icon}</span>
+                <div>
+                  <h3 class="card-name">{server.name}</h3>
+                  <span class="card-badge">{server.category}</span>
+                </div>
+              </div>
+            </div>
+            <p class="card-desc">{server.description}</p>
+            
+            <div class="card-actions">
+              <div class="card-install">
+                <span class="install-cmd" id={`cmd-${server.id}`}>{server.command}</span>
+                <button class="btn-copy" onclick={`copyText('cmd-${server.id}', 'Command copied!')`} title="Copy install command" aria-label="Copy install command">
+                  <span aria-hidden="true">📋</span>
+                </button>
+              </div>
+              <button class="btn-card-action" onclick={`copyServerConfig('${server.id}')`} title="Copy default mcp_config.json block">
+                <span role="img" aria-hidden="true">⚙️</span> Copy JSON
+              </button>
+            </div>
+            
+            <div class="card-footer">
+              <span class="card-author">By {server.author} &bull; <a href={`/servers/${server.id}`} class="details-link" style="color: var(--accent-blue); text-decoration: none; font-weight: 500;">Details &rarr;</a></span>
+              <span class="card-stars"><span role="img" aria-label="stars">⭐️</span> {server.stars}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Servers Pagination Container -->
+      <div id="servers-pagination" class="pagination-container" style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 40px; flex-wrap: wrap;">
+      </div>
+    </section>
+
+    <!-- Dynamic Configuration Generator Section -->
+    <section id="config-generator" class="generator-section">
+      <div class="container">
+        <div class="section-title-wrap text-center">
+          <div class="badge">Config Builder</div>
+          <h2>Interactive <span class="text-gradient">mcp_config.json</span> Builder</h2>
+          <p class="section-subtitle">Select the tools you want to use, customize their configuration arguments, and copy the unified configuration file directly into your agent setup.</p>
+        </div>
+
+        <div class="generator-layout">
+          <!-- Configuration Controls (Left) -->
+          <div class="generator-controls glass-panel">
+            <h3 class="panel-title">1. Select & Configure Servers</h3>
+            <div class="controls-list" id="controls-list">
+              <!-- Dynamically populated checkboxes and inputs -->
+            </div>
+          </div>
+
+          <!-- JSON Output Preview (Right) -->
+          <div class="generator-output glass-panel">
+            <div class="output-header">
+              <h3 class="panel-title">2. Live config file</h3>
+              <button class="btn btn-secondary btn-sm copy-config-btn" id="copy-config-btn">
+                <span class="btn-icon">📋</span> Copy Configuration
+              </button>
+            </div>
+            <div class="code-container">
+              <pre><code id="json-preview">// Configuration will generate here...</code></pre>
+            </div>
+            <div class="config-instructions">
+              <h4>💡 How to Use:</h4>
+              <p>Save this code as <code>mcp_config.json</code> in your local app configuration directory (e.g., <code>~/Library/Application Support/Antigravity/mcp_config.json</code> or your Claude Desktop config folder).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Start Guide -->
+    <section id="quickstart" class="quickstart-section container">
+      <div class="glass-panel quickstart-panel">
+        <div class="quickstart-grid">
+          <div class="quickstart-content">
+            <div class="badge">Developer Guide</div>
+            <h2>Build Your Own <span class="text-gradient">MCP Server</span></h2>
+            <p>Writing custom MCP servers is simple. Create integrations in Node.js or Python to give your AI workspace access to proprietary systems and APIs.</p>
+            
+            <div class="step-list">
+              <div class="step-item">
+                <div class="step-num">1</div>
+                <div>
+                  <strong>Install the SDK:</strong> Start by installing the model-context-protocol client/server library.
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">2</div>
+                <div>
+                  <strong>Define Tools:</strong> Register tool functions, descriptions, and parameter schemas.
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">3</div>
+                <div>
+                  <strong>Expose Endpoints:</strong> Read/write inputs over stdio or HTTP endpoints.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="quickstart-code">
+            <div class="code-header">
+              <span class="code-title">server.js (Node.js SDK)</span>
+              <button class="btn-copy-code" data-copy-target="node-sdk-code">Copy</button>
+            </div>
+            <div class="code-container">
+              <pre><code id="node-sdk-code">{`import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+
+// Initialize server
+const server = new Server({
+  name: "custom-mcp-server",
+  version: "1.0.0"
+}, {
+  capabilities: { tools: {} }
+});
+
+// Define a tool
+server.setRequestHandler(ListToolsRequestSchema, async () => ({
+  tools: [{
+    name: "calculate_metric",
+    description: "Computes custom business analytics",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string" }
+      },
+      required: ["id"]
+    }
+  }]
+}));
+
+// Connect standard input/output transport
+const transport = new StdioServerTransport();
+await server.connect(transport);`}</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Learning Paths & Resources View (Tab 2) -->
+  <div id="view-learning" class="tab-view container" role="tabpanel" aria-labelledby="tab-learning" tabindex="0">
+    <section class="resources-explorer-section">
+      <div class="resources-filter-bar glass-panel">
+        <!-- Free vs Paid filter -->
+        <div class="filter-group">
+          <span class="filter-label">Cost:</span>
+          <div class="cost-toggles">
+            <button class="cost-btn active" data-cost="all">All</button>
+            <button class="cost-btn" data-cost="free">Free</button>
+            <button class="cost-btn" data-cost="paid">Paid</button>
+          </div>
+        </div>
+
+        <!-- Topic Category filter -->
+        <div class="filter-group">
+          <span class="filter-label">Topic:</span>
+          <select id="resource-category" class="sort-select">
+            <option value="all">All Topics</option>
+            <option value="llm-fundamentals">LLM Fundamentals</option>
+            <option value="agent-orchestration">Agent Orchestration</option>
+            <option value="custom-mcp">Custom MCP Dev</option>
+          </select>
+        </div>
+
+        <!-- Experience Level filter -->
+        <div class="filter-group">
+          <span class="filter-label">Level:</span>
+          <select id="resource-level" class="sort-select">
+            <option value="all">All Levels</option>
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </div>
+
+        <!-- Sort Selectors -->
+        <div class="filter-group">
+          <span class="filter-label">Sort By:</span>
+          <select id="resource-sort" class="sort-select">
+            <option value="rating">Highest Reviews ⭐️</option>
+            <option value="price-asc">Price: Low to High 📈</option>
+            <option value="price-desc">Price: High to Low 📉</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Resources Grid (Pre-rendered for SEO) -->
+      <div class="resources-grid" id="resources-grid">
+        {learningResources.map(res => {
+          const priceText = res.cost === "free" ? "Free" : `$${res.price.toFixed(2)}`;
+          const priceClass = res.cost === "free" ? "free" : "paid";
+          const categoryTitle = categoryMap[res.courseCategory] || res.courseCategory;
+          
+          return (
+            <div class="resource-card glass-panel" data-resource-id={res.id}>
+              <div class="card-top">
+                <div class="card-title-wrap">
+                  <div>
+                    <h3 class="card-name">{res.title}</h3>
+                    <div style="display:flex; gap:6px; margin-top:6px; flex-wrap:wrap;">
+                      <span class="resource-badge">{res.type}</span>
+                      <span class="level-badge">{res.level}</span>
+                      <span class="category-badge">{categoryTitle}</span>
+                    </div>
+                  </div>
+                </div>
+                {res.badge && <span class="badge" style="margin-bottom:0; font-size:0.6rem; padding:4px 10px;">{res.badge}</span>}
+              </div>
+              <p class="card-desc">{res.description}</p>
+              
+              <div class="card-footer" style="border:none; padding-top:0;">
+                <span class="card-author">By {res.author}</span>
+                <div class="price-container">
+                  <span class={`price-tag ${priceClass}`}>{priceText}</span>
+                </div>
+              </div>
+              
+              <div class="card-footer" style="padding-top:10px;">
+                <div class="rating-stars" aria-label={`Rating: ${res.rating.toFixed(1)} out of 5 stars based on ${res.reviewCount} reviews`}>
+                  <span class="rating-value" aria-hidden="true">{res.rating.toFixed(1)}</span>
+                  <span aria-hidden="true">
+                    {"★".repeat(Math.floor(res.rating)) + "☆".repeat(5 - Math.floor(res.rating))}
+                  </span>
+                  <span class="rating-count" aria-hidden="true">({res.reviewCount})</span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <a href={`/learning/${res.id}`} class="btn btn-secondary btn-sm">Info</a>
+                  <a href={res.url} target="_blank" rel="noopener sponsored" class="btn btn-primary btn-sm">
+                    Visit Resource ↗
+                  </a>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  </div>
+
+  <!-- Config Validator View (Tab 3) -->
+  <div id="view-validator" class="tab-view container" role="tabpanel" aria-labelledby="tab-validator" tabindex="0">
+    <section class="resources-explorer-section" style="padding-top:20px;">
+      <div class="generator-layout">
+        <!-- Editor Input Panel (Left) -->
+        <div class="generator-controls glass-panel" style="padding:30px; display:flex; flex-direction:column;">
+          <div class="output-header" style="margin-bottom:16px;">
+            <h3 class="panel-title" id="validator-title" style="margin-bottom:0; border:none; padding:0;">Paste your mcp_config.json</h3>
+            <button class="btn btn-secondary btn-sm" id="btn-load-sample" style="font-size:0.75rem;">Load Sample</button>
+          </div>
+          <label for="validator-textarea" class="sr-only">Paste your mcp_config.json configuration</label>
+          <textarea id="validator-textarea" aria-labelledby="validator-title" placeholder={`{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your_token"
+      }
+    }
+  }
+}`} style="flex-grow:1; width:100%; min-height:400px; background:#04060a; border:1px solid var(--card-border); border-radius:8px; padding:16px; color:#c3e88d; font-family:monospace; font-size:0.85rem; outline:none; resize:vertical; line-height:1.5;"></textarea>
+        </div>
+
+        <!-- Validation Report Panel (Right) -->
+        <div class="generator-output glass-panel" style="padding:30px; display:flex; flex-direction:column;">
+          <h3 class="panel-title">Validation Report</h3>
+          <div id="validator-status-container">
+            <!-- Will render dynamic validation state card -->
+            <div class="validation-alert info" style="display:flex; gap:16px; background:rgba(79, 172, 254, 0.08); border:1px solid rgba(79, 172, 254, 0.2); border-radius:8px; padding:16px;">
+              <span style="font-size:1.5rem; line-height:1.2;">💡</span>
+              <div>
+                <strong style="color:var(--accent-blue); display:block; font-size:0.95rem;">Waiting for input...</strong>
+                <span style="font-size:0.85rem; color:var(--text-secondary); display:block; margin-top:4px;">Paste your configuration JSON in the editor on the left to begin audit.</span>
+              </div>
+            </div>
+          </div>
+          
+          <div style="margin-top:20px; flex-grow:1; display:flex; flex-direction:column; gap:12px;" id="validator-rules-logs">
+            <!-- Audit Checklist items -->
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Client-side script handling search, config generator, validation and interactive tabs -->
+  <script is:inline>
+    // State-managed data loaded asynchronously
+    let mcpRegistry = [];
+    let learningResources = [];
+
+    // Map category IDs to user-friendly titles
+    const categoryMap = {
+      "llm-fundamentals": "LLM Fundamentals",
+      "agent-orchestration": "Agent Orchestration",
+      "custom-mcp": "Custom MCP Dev"
+    };
+
+    // DOM Elements
+    const serverGrid = document.getElementById("server-grid");
+    const resourcesGrid = document.getElementById("resources-grid");
+    const searchInput = document.getElementById("search-input");
+    const categoryFilters = document.getElementById("category-filters");
+    const controlsList = document.getElementById("controls-list");
+    const jsonPreview = document.getElementById("json-preview");
+    const copyConfigBtn = document.getElementById("copy-config-btn");
+    const toast = document.getElementById("toast-notification");
+
+    // Tab toggles
+    const tabViews = document.querySelectorAll(".tab-view");
+    const pageTabs = document.querySelectorAll(".page-tab");
+    const tabLinks = document.querySelectorAll(".tab-nav-link");
+
+    // Resource filters
+    const resourceSort = document.getElementById("resource-sort");
+    const resourceCategorySelect = document.getElementById("resource-category");
+    const resourceLevelSelect = document.getElementById("resource-level");
+    const costBtns = document.querySelectorAll(".cost-btn");
+
+    // Validator Elements
+    const validatorTextarea = document.getElementById("validator-textarea");
+    const validatorStatusContainer = document.getElementById("validator-status-container");
+    const validatorRulesLogs = document.getElementById("validator-rules-logs");
+    const btnLoadSample = document.getElementById("btn-load-sample");
+
+    // Application State
+    let activeTab = "servers";
+    let currentCategory = "all";
+    let costFilter = "all";
+    let resourceCategoryFilter = "all";
+    let resourceLevelFilter = "all";
+    let sortBy = "rating";
+    let searchQuery = "";
+    let selectedServers = {
+      kite: true
+    };
+    let serverParamValues = {};
+
+    // New state for layout and pagination
+    let currentPage = 1;
+    const pageSize = 12;
+    let activeLayout = "grid"; // "grid" or "list"
+
+    // Initialize Website
+    async function init() {
+      try {
+        const response = await fetch('/data.json?v=' + new Date().getTime());
+        if (!response.ok) throw new Error("HTTP error " + response.status);
+        const data = await response.json();
+        
+        mcpRegistry = data.mcpRegistry;
+        learningResources = data.learningResources;
+        
+        // Render and bind
+        renderServers();
+        renderResources();
+        setupEventListeners();
+        renderConfigGenerator();
+        updateConfigJSON();
+
+        // Check URL parameters for deep links from detail pages
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectServerId = urlParams.get('select');
+        if (selectServerId && mcpRegistry.some(s => s.id === selectServerId)) {
+          selectedServers = { [selectServerId]: true };
+          renderConfigGenerator();
+          updateConfigJSON();
+          
+          // Switch to config builder view if select query is active
+          const genSection = document.getElementById("config-generator");
+          if (genSection) {
+            genSection.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load registry data", err);
+      }
+    }
+
+    // Lightweight JSON syntax highlighter
+    function highlightJSON(jsonString) {
+      if (!jsonString) return "";
+      let html = jsonString
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+      
+      const regex = /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g;
+      
+      return html.replace(regex, function (match) {
+        let cls = 'json-number';
+        if (/^"/.test(match)) {
+          if (/:$/.test(match)) {
+            cls = 'json-key';
+          } else {
+            cls = 'json-string';
+          }
+        } else if (/true|false/.test(match)) {
+          cls = 'json-boolean';
+        } else if (/null/.test(match)) {
+          cls = 'json-null';
+        }
+        return '<span class="' + cls + '">' + match + '</span>';
+      });
+    }
+
+    // Direct card-specific config copies
+    window.copyServerConfig = function(serverId) {
+      const server = mcpRegistry.find(s => s.id === serverId);
+      if (!server) return;
+      
+      const defaults = {};
+      if (serverId === "github") {
+        defaults.GITHUB_PERSONAL_ACCESS_TOKEN = "YOUR_GITHUB_TOKEN";
+      } else if (serverId === "postgres") {
+        defaults.connectionString = "postgresql://localhost:5432/mydb";
+      } else if (serverId === "slack") {
+        defaults.SLACK_BOT_TOKEN = "YOUR_SLACK_BOT_TOKEN";
+      } else if (serverId === "brave-search") {
+        defaults.BRAVE_API_KEY = "YOUR_BRAVE_API_KEY";
+      } else if (serverId === "filesystem") {
+        defaults.allowedDirectories = "/path/to/folder";
+      }
+      
+      const singleConfig = {
+        mcpServers: {
+          [serverId]: server.id === "github" ? {
+            command: "npx",
+            args: ["-y", "@modelcontextprotocol/server-github"],
+            env: { GITHUB_PERSONAL_ACCESS_TOKEN: defaults.GITHUB_PERSONAL_ACCESS_TOKEN }
+          } : server.id === "postgres" ? {
+            command: "npx",
+            args: ["-y", "@modelcontextprotocol/server-postgres", defaults.connectionString]
+          } : server.id === "slack" ? {
+            command: "npx",
+            args: ["-y", "@modelcontextprotocol/server-slack"],
+            env: { SLACK_BOT_TOKEN: defaults.SLACK_BOT_TOKEN }
+          } : server.id === "brave-search" ? {
+            command: "npx",
+            args: ["-y", "@modelcontextprotocol/server-brave-search"],
+            env: { BRAVE_API_KEY: defaults.BRAVE_API_KEY }
+          } : server.id === "filesystem" ? {
+            command: "npx",
+            args: ["-y", "@modelcontextprotocol/server-filesystem", defaults.allowedDirectories]
+          } : server.id === "kite" ? {
+            command: "npx",
+            args: ["-y", "mcp-remote", "https://mcp.kite.trade/mcp"]
+          } : {
+            command: "npx",
+            args: ["-y", `@modelcontextprotocol/server-${serverId}`]
+          }
+        }
+      };
+      
+      const text = JSON.stringify(singleConfig, null, 2);
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(`${server.name} config block copied!`);
+      }).catch(() => {
+        alert("Copy failed.");
+      });
+    };
+
+    // Render the grid cards dynamically
+    function renderServers() {
+      if (!serverGrid) return;
+      serverGrid.innerHTML = "";
+      
+      const filtered = mcpRegistry.filter(server => {
+        const matchesCategory = currentCategory === "all" || server.category === currentCategory;
+        const matchesSearch = server.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                              server.description.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesCategory && matchesSearch;
+      });
+
+      // Update screen reader results status
+      const announcer = document.getElementById("search-results-announcer");
+      if (announcer) {
+        announcer.textContent = filtered.length === 0 ? "No servers found." : `${filtered.length} servers found.`;
+      }
+
+      // Calculate pagination
+      const totalPages = Math.ceil(filtered.length / pageSize) || 1;
+      if (currentPage > totalPages) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
+      
+      const startIdx = (currentPage - 1) * pageSize;
+      const paginatedItems = filtered.slice(startIdx, startIdx + pageSize);
+
+      if (paginatedItems.length === 0) {
+        serverGrid.innerHTML = `
+          <div class="no-results" style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
+            <p style="font-size: 1.2rem; margin-bottom: 8px;">No servers found</p>
+            <p style="font-size: 0.9rem;">Try searching for another keyword or check the spelling.</p>
+          </div>
+        `;
+        renderPagination(0, 1);
+        return;
+      }
+
+      // Set layout class on grid
+      if (activeLayout === "list") {
+        serverGrid.classList.add("list-layout");
+      } else {
+        serverGrid.classList.remove("list-layout");
+      }
+
+      paginatedItems.forEach(server => {
+        const card = document.createElement("div");
+        card.className = "server-card glass-panel";
+        
+        card.innerHTML = `
+          <div class="card-top">
+            <div class="card-title-wrap">
+              <span class="card-icon" role="img" aria-hidden="true">${server.icon}</span>
+              <div>
+                <h3 class="card-name">${server.name}</h3>
+                <span class="card-badge">${server.category}</span>
+              </div>
+            </div>
+          </div>
+          <p class="card-desc">${server.description}</p>
+          
+          <div class="card-actions">
+            <div class="card-install">
+              <span class="install-cmd" id="cmd-${server.id}">${server.command}</span>
+              <button class="btn-copy" onclick="copyText('cmd-${server.id}', 'Command copied!')" title="Copy install command" aria-label="Copy install command">
+                <span aria-hidden="true">📋</span>
+              </button>
+            </div>
+            <button class="btn-card-action" onclick="copyServerConfig('${server.id}')" title="Copy default mcp_config.json block">
+              <span role="img" aria-hidden="true">⚙️</span> Copy JSON
+            </button>
+          </div>
+          
+          <div class="card-footer">
+            <span class="card-author">By ${server.author} &bull; <a href="/servers/${server.id}" class="details-link" style="color: var(--accent-blue); text-decoration: none; font-weight: 500;">Details &rarr;</a></span>
+            <span class="card-stars"><span role="img" aria-label="stars">⭐️</span> ${server.stars}</span>
+          </div>
+        `;
+        
+        serverGrid.appendChild(card);
+      });
+
+      renderPagination(filtered.length, totalPages);
+    }
+
+    // Render the pagination controls
+    function renderPagination(totalItems, totalPages) {
+      const container = document.getElementById("servers-pagination");
+      if (!container) return;
+      container.innerHTML = "";
+
+      if (totalPages <= 1) {
+        return;
+      }
+
+      function createBtn(text, pageNum, disabled, isActive = false) {
+        const btn = document.createElement("button");
+        btn.className = `pagination-btn ${isActive ? 'active' : ''}`;
+        btn.innerHTML = text;
+        btn.disabled = disabled;
+        if (!disabled) {
+          btn.addEventListener("click", () => {
+            currentPage = pageNum;
+            renderServers();
+            const explorerSection = document.getElementById("servers-explorer");
+            if (explorerSection) {
+              explorerSection.scrollIntoView({ behavior: 'smooth' });
+            }
+          });
+        }
+        return btn;
+      }
+
+      container.appendChild(createBtn("« First", 1, currentPage === 1));
+      container.appendChild(createBtn("‹ Prev", currentPage - 1, currentPage === 1));
+
+      let startPage = Math.max(1, currentPage - 2);
+      let endPage = Math.min(totalPages, startPage + 4);
+      if (endPage - startPage < 4) {
+        startPage = Math.max(1, endPage - 4);
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        container.appendChild(createBtn(i.toString(), i, false, i === currentPage));
+      }
+
+      container.appendChild(createBtn("Next ›", currentPage + 1, currentPage === totalPages));
+      container.appendChild(createBtn("Last »", totalPages, currentPage === totalPages));
+    }
+
+    // Render learning resources cards dynamically
+    function renderResources() {
+      if (!resourcesGrid) return;
+      resourcesGrid.innerHTML = "";
+
+      let filtered = learningResources.filter(res => {
+        const matchesCost = costFilter === "all" || res.cost === costFilter;
+        const matchesCategory = resourceCategoryFilter === "all" || res.courseCategory === resourceCategoryFilter;
+        const matchesLevel = resourceLevelFilter === "all" || res.level === resourceLevelFilter;
+        const matchesSearch = res.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                              res.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                              res.author.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesCost && matchesCategory && matchesLevel && matchesSearch;
+      });
+
+      // Update screen reader results status
+      const announcer = document.getElementById("search-results-announcer");
+      if (announcer) {
+        announcer.textContent = filtered.length === 0 ? "No resources found." : `${filtered.length} resources found.`;
+      }
+
+      if (sortBy === "rating") {
+        filtered.sort((a, b) => b.rating - a.rating);
+      } else if (sortBy === "price-asc") {
+        filtered.sort((a, b) => a.price - b.price);
+      } else if (sortBy === "price-desc") {
+        filtered.sort((a, b) => b.price - a.price);
+      }
+
+      if (filtered.length === 0) {
+        resourcesGrid.innerHTML = `
+          <div class="no-results" style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
+            <p style="font-size: 1.2rem; margin-bottom: 8px;">No resources found</p>
+            <p style="font-size: 0.9rem;">Try altering your filters or search keywords.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(res => {
+        const card = document.createElement("div");
+        card.className = "resource-card glass-panel";
+        
+        const priceText = res.cost === "free" ? "Free" : `$${res.price.toFixed(2)}`;
+        const priceClass = res.cost === "free" ? "free" : "paid";
+        const categoryTitle = categoryMap[res.courseCategory] || res.courseCategory;
+        
+        card.innerHTML = `
+          <div class="card-top">
+            <div class="card-title-wrap">
+              <div>
+                <h3 class="card-name">${res.title}</h3>
+                <div style="display:flex; gap:6px; margin-top:6px; flex-wrap:wrap;">
+                  <span class="resource-badge">${res.type}</span>
+                  <span class="level-badge">${res.level}</span>
+                  <span class="category-badge">${categoryTitle}</span>
+                </div>
+              </div>
+            </div>
+            ${res.badge ? `<span class="badge" style="margin-bottom:0; font-size:0.6rem; padding:4px 10px;">${res.badge}</span>` : ''}
+          </div>
+          <p class="card-desc">${res.description}</p>
+          
+          <div class="card-footer" style="border:none; padding-top:0;">
+            <span class="card-author">By ${res.author}</span>
+            <div class="price-container">
+              <span class="price-tag ${priceClass}">${priceText}</span>
+            </div>
+          </div>
+          
+          <div class="card-footer" style="padding-top:10px;">
+            <div class="rating-stars" aria-label="Rating: ${res.rating.toFixed(1)} out of 5 stars based on ${res.reviewCount} reviews">
+              <span class="rating-value" aria-hidden="true">${res.rating.toFixed(1)}</span>
+              <span aria-hidden="true">
+                ${"★".repeat(Math.floor(res.rating))}${"☆".repeat(5 - Math.floor(res.rating))}
+              </span>
+              <span class="rating-count" aria-hidden="true">(${res.reviewCount})</span>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <a href="/learning/${res.id}" class="btn btn-secondary btn-sm">Info</a>
+              <a href="${res.url}" target="_blank" rel="noopener sponsored" class="btn btn-primary btn-sm">
+                Visit Resource ↗
+              </a>
+            </div>
+          </div>
+        `;
+        
+        resourcesGrid.appendChild(card);
+      });
+    }
+
+    // Real-time config validator audit function
+    function validateConfigJSON(rawText) {
+      if (!validatorStatusContainer || !validatorRulesLogs) return;
+      
+      const trimmed = rawText.trim();
+      if (trimmed === "") {
+        validatorStatusContainer.innerHTML = `
+          <div class="validation-alert info" style="display:flex; gap:16px; background:rgba(79, 172, 254, 0.08); border:1px solid rgba(79, 172, 254, 0.2); border-radius:8px; padding:16px;">
+            <span style="font-size:1.5rem; line-height:1.2;">💡</span>
+            <div>
+              <strong style="color:var(--accent-blue); display:block; font-size:0.95rem;">Waiting for input...</strong>
+              <span style="font-size:0.85rem; color:var(--text-secondary); display:block; margin-top:4px;">Paste your configuration JSON in the editor on the left to begin audit.</span>
+            </div>
+          </div>
+        `;
+        validatorRulesLogs.innerHTML = "";
+        return;
+      }
+
+      let parsed = null;
+      let parseError = null;
+
+      try {
+        parsed = JSON.parse(trimmed);
+      } catch (err) {
+        parseError = err.message;
+      }
+
+      if (parseError) {
+        validatorStatusContainer.innerHTML = `
+          <div class="validation-alert error">
+            <span style="font-size:1.5rem; line-height:1.2;">❌</span>
+            <div>
+              <strong>Invalid JSON Format</strong>
+              <span style="font-size:0.85rem; color:var(--text-secondary); display:block; margin-top:4px;">Your code failed to parse. Details: <code>${parseError}</code></span>
+            </div>
+          </div>
+        `;
+        validatorRulesLogs.innerHTML = `
+          <div class="validation-rule fail">
+            <span class="rule-icon">❌</span>
+            <div class="rule-details">
+              <span class="rule-title">Syntax Check Failed</span>
+              <span class="rule-desc">Make sure all double quotes, brackets, and commas match exactly. Trailing commas inside arrays/objects are invalid in JSON.</span>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const rules = [];
+
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed) && parsed.mcpServers) {
+        rules.push({
+          status: "pass",
+          title: "Top-level 'mcpServers' object found",
+          desc: "Configuration is correctly wrapped inside the required mcpServers parent object."
+        });
+        
+        const servers = parsed.mcpServers;
+        if (typeof servers !== "object" || Array.isArray(servers)) {
+          rules.push({
+            status: "fail",
+            title: "'mcpServers' must be a JSON object",
+            desc: "Found mcpServers, but its value is not a valid map of server definitions."
+          });
+        } else {
+          const serverKeys = Object.keys(servers);
+          if (serverKeys.length === 0) {
+            rules.push({
+              status: "warn",
+              title: "No server configurations declared",
+              desc: "Your config file works, but mcpServers is currently empty. Add at least one server definition."
+            });
+          } else {
+            serverKeys.forEach(key => {
+              const config = servers[key];
+              if (!config || typeof config !== "object" || Array.isArray(config)) {
+                rules.push({
+                  status: "fail",
+                  title: `Server '${key}' definition is invalid`,
+                  desc: `Expected a configuration object for server '${key}', but received a primitive or array.`
+                });
+                return;
+              }
+
+              if (config.command) {
+                rules.push({
+                  status: "pass",
+                  title: `Server '${key}': command specified`,
+                  desc: `Executes with command binary: '${config.command}'.`
+                });
+                
+                if (config.command === "npx") {
+                  const hasY = config.args && Array.isArray(config.args) && config.args.includes("-y");
+                  if (hasY) {
+                    rules.push({
+                      status: "pass",
+                      title: `Server '${key}': NPX runs in non-interactive mode`,
+                      desc: "Includes the '-y' flag to bypass package installer prompts."
+                    });
+                  } else {
+                    rules.push({
+                      status: "warn",
+                      title: `Server '${key}': NPX runs without '-y' flag`,
+                      desc: "Tip: Running npx without '-y' might cause your AI agent client (like Claude Desktop) to hang indefinitely waiting for approval prompts."
+                    });
+                  }
+                }
+              } else {
+                rules.push({
+                  status: "fail",
+                  title: `Server '${key}': missing command parameter`,
+                  desc: "Every active server configuration block must specify a 'command' string."
+                });
+              }
+
+              if (config.args && !Array.isArray(config.args)) {
+                rules.push({
+                  status: "fail",
+                  title: `Server '${key}': 'args' parameter is not an array`,
+                  desc: "The 'args' field must be an array of strings. Received type: " + (typeof config.args)
+                });
+              }
+
+              if (config.env && (typeof config.env !== "object" || Array.isArray(config.env))) {
+                rules.push({
+                  status: "fail",
+                  title: `Server '${key}': 'env' parameter is not an object`,
+                  desc: "The 'env' environment block must be a standard JSON key-value map."
+                });
+              }
+
+              const normKey = key.toLowerCase();
+              if (normKey.includes("github")) {
+                const hasToken = config.env && config.env.GITHUB_PERSONAL_ACCESS_TOKEN;
+                if (hasToken) {
+                  rules.push({
+                    status: "pass",
+                    title: `Server '${key}': GITHUB_PERSONAL_ACCESS_TOKEN env var detected`,
+                    desc: "GitHub credential check passed."
+                  });
+                } else {
+                  rules.push({
+                    status: "warn",
+                    title: `Server '${key}': Missing GITHUB_PERSONAL_ACCESS_TOKEN env var`,
+                    desc: "Recommendation: The official GitHub MCP server requires GITHUB_PERSONAL_ACCESS_TOKEN to access API endpoints."
+                  });
+                }
+              } else if (normKey.includes("slack")) {
+                const hasToken = config.env && config.env.SLACK_BOT_TOKEN;
+                if (hasToken) {
+                  rules.push({
+                    status: "pass",
+                    title: `Server '${key}': SLACK_BOT_TOKEN env var detected`,
+                    desc: "Slack credential check passed."
+                  });
+                } else {
+                  rules.push({
+                    status: "warn",
+                    title: `Server '${key}': Missing GENDERAL_ACCESS_TOKEN or SLACK_BOT_TOKEN env var`,
+                    desc: "Recommendation: The official Slack MCP server requires SLACK_BOT_TOKEN to post messages."
+                  });
+                }
+              } else if (normKey.includes("postgres")) {
+                const hasUri = config.args && config.args.some(a => typeof a === "string" && a.startsWith("postgresql://"));
+                if (hasUri) {
+                  rules.push({
+                    status: "pass",
+                    title: `Server '${key}': postgresql:// URI argument detected`,
+                    desc: "PostgreSQL connection string audit passed."
+                  });
+                } else {
+                  rules.push({
+                    status: "warn",
+                    title: `Server '${key}': No postgresql:// URI found in arguments`,
+                    desc: "Recommendation: Ensure you pass your DB connection string (postgresql://user:pass@host:5432/db) inside the args list."
+                  });
+                }
+              } else if (normKey.includes("filesystem")) {
+                const hasPaths = config.args && config.args.length > 0;
+                if (hasPaths) {
+                  rules.push({
+                    status: "pass",
+                    title: `Server '${key}': folders argument declared`,
+                    desc: "Checked directory permissions list."
+                  });
+                } else {
+                  rules.push({
+                    status: "warn",
+                    title: `Server '${key}': no directory paths declared in arguments`,
+                    desc: "Recommendation: Expose folders by passing one or more absolute paths inside the args array."
+                  });
+                }
+              }
+            });
+          }
+        }
+      } else {
+        rules.push({
+          status: "fail",
+          title: "Missing 'mcpServers' top-level key",
+          desc: "A valid configuration must contain a root 'mcpServers' object containing your server definitions."
+        });
+      }
+
+      const hasFail = rules.some(r => r.status === "fail");
+      const hasWarn = rules.some(r => r.status === "warn");
+
+      if (hasFail) {
+        validatorStatusContainer.innerHTML = `
+          <div class="validation-alert error">
+            <span style="font-size:1.5rem; line-height:1.2;">❌</span>
+            <div>
+              <strong>Audit Failed: Breaking Issues Found</strong>
+              <span style="font-size:0.85rem; color:var(--text-secondary); display:block; margin-top:4px;">Fix the red issues in your configuration JSON to make it valid for MCP clients.</span>
+            </div>
+          </div>
+        `;
+      } else if (hasWarn) {
+        validatorStatusContainer.innerHTML = `
+          <div class="validation-alert warning">
+            <span style="font-size:1.5rem; line-height:1.2;">⚠️</span>
+            <div>
+              <strong>Configuration Valid, with Warnings</strong>
+              <span style="font-size:0.85rem; color:var(--text-secondary); display:block; margin-top:4px;">The JSON structure is valid, but we identified parameters or flags that could cause issues.</span>
+            </div>
+          </div>
+        `;
+      } else {
+        validatorStatusContainer.innerHTML = `
+          <div class="validation-alert success">
+            <span style="font-size:1.5rem; line-height:1.2;">✅</span>
+            <div>
+              <strong>Configuration is Perfect!</strong>
+              <span style="font-size:0.85rem; color:var(--text-secondary); display:block; margin-top:4px;">Excellent. All checks passed. Your mcp_config.json file is fully optimized and ready to deploy.</span>
+            </div>
+          </div>
+        `;
+      }
+
+      validatorRulesLogs.innerHTML = rules.map(rule => {
+        const icon = rule.status === "pass" ? "✅" : rule.status === "warn" ? "⚠️" : "❌";
+        return `
+          <div class="validation-rule ${rule.status === "pass" ? "pass" : rule.status === "warn" ? "warn" : "fail"}">
+            <span class="rule-icon">${icon}</span>
+            <div class="rule-details">
+              <span class="rule-title">${rule.title}</span>
+              <span class="rule-desc">${rule.desc}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Render the configuration generator interactive elements
+    function renderConfigGenerator() {
+      if (!controlsList) return;
+      controlsList.innerHTML = "";
+      
+      mcpRegistry.forEach(server => {
+        const isSelected = !!selectedServers[server.id];
+        
+        const item = document.createElement("div");
+        item.className = `config-item ${isSelected ? 'selected' : ''}`;
+        item.id = `config-item-${server.id}`;
+        
+        let paramsHtml = "";
+        if (server.id === "github") {
+          paramsHtml = `
+            <div class="config-inputs-panel">
+              <div class="config-field">
+                <label for="input-github-token">GitHub Personal Access Token (Env Var)</label>
+                <input type="password" id="input-github-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" data-server="github" data-param="GITHUB_PERSONAL_ACCESS_TOKEN" oninput="onParamChange(this)">
+                <span style="font-size:0.7rem; color:var(--text-muted);">Token requires repo scope.</span>
+              </div>
+            </div>
+          `;
+        } else if (server.id === "postgres") {
+          paramsHtml = `
+            <div class="config-inputs-panel">
+              <div class="config-field">
+                <label for="input-postgres-uri">Database Connection URI (Argument)</label>
+                <input type="text" id="input-postgres-uri" placeholder="postgresql://localhost:5432/mydb" data-server="postgres" data-param="connectionString" oninput="onParamChange(this)">
+                <span style="font-size:0.7rem; color:var(--text-muted);">Standard connection URL.</span>
+              </div>
+            </div>
+          `;
+        } else if (server.id === "slack") {
+          paramsHtml = `
+            <div class="config-inputs-panel">
+              <div class="config-field">
+                <label for="input-slack-token">Slack Bot Token (Env Var)</label>
+                <input type="password" id="input-slack-token" placeholder="xoxb-xxxxxxxxx" data-server="slack" data-param="SLACK_BOT_TOKEN" oninput="onParamChange(this)">
+                <span style="font-size:0.7rem; color:var(--text-muted);">Bot User OAuth token.</span>
+              </div>
+            </div>
+          `;
+        } else if (server.id === "brave-search") {
+          paramsHtml = `
+            <div class="config-inputs-panel">
+              <div class="config-field">
+                <label for="input-brave-key">Brave API Key (Env Var)</label>
+                <input type="password" id="input-brave-key" placeholder="BSxxxxxxxxxxxx" data-server="brave-search" data-param="BRAVE_API_KEY" oninput="onParamChange(this)">
+                <span style="font-size:0.7rem; color:var(--text-muted);">Get a search API key from Brave.</span>
+              </div>
+            </div>
+          `;
+        } else if (server.id === "filesystem") {
+          paramsHtml = `
+            <div class="config-inputs-panel">
+              <div class="config-field">
+                <label for="input-filesystem-dirs">Allowed Directories (Comma separated)</label>
+                <input type="text" id="input-filesystem-dirs" placeholder="/Users/username/projects" data-server="filesystem" data-param="allowedDirectories" oninput="onParamChange(this)">
+                <span style="font-size:0.7rem; color:var(--text-muted);">Folders permitted for read/write.</span>
+              </div>
+            </div>
+          `;
+        }
+
+        item.innerHTML = `
+          <label class="config-checkbox-label">
+            <input 
+              type="checkbox" 
+              ${isSelected ? 'checked' : ''} 
+              data-server-id="${server.id}"
+              onchange="toggleServerSelection(this)"
+            >
+            <span>${server.icon} ${server.name}</span>
+          </label>
+          ${paramsHtml}
+        `;
+        
+        controlsList.appendChild(item);
+      });
+    }
+
+    // Handle checkbox changes in config generator
+    window.toggleServerSelection = function(checkbox) {
+      const serverId = checkbox.dataset.serverId;
+      const isChecked = checkbox.checked;
+      
+      selectedServers[serverId] = isChecked;
+      
+      const parentItem = document.getElementById(`config-item-${serverId}`);
+      if (parentItem) {
+        if (isChecked) {
+          parentItem.classList.add("selected");
+        } else {
+          parentItem.classList.remove("selected");
+        }
+      }
+      
+      updateConfigJSON();
+    };
+
+    // Handle parameter changes in inputs
+    window.onParamChange = function(input) {
+      const serverId = input.dataset.server;
+      const paramKey = input.dataset.param;
+      const val = input.value;
+      
+      serverParamValues[`${serverId}_${paramKey}`] = val;
+      updateConfigJSON();
+    };
+
+    // Rebuild and output the config JSON preview
+    function updateConfigJSON() {
+      if (!jsonPreview) return;
+      const config = {
+        mcpServers: {}
+      };
+      
+      let hasAny = false;
+      
+      mcpRegistry.forEach(server => {
+        if (selectedServers[server.id]) {
+          hasAny = true;
+          const vals = {};
+          if (server.id === "github") {
+            vals.GITHUB_PERSONAL_ACCESS_TOKEN = serverParamValues["github_GITHUB_PERSONAL_ACCESS_TOKEN"] || "YOUR_GITHUB_TOKEN";
+            config.mcpServers.github = {
+              command: "npx",
+              args: ["-y", "@modelcontextprotocol/server-github"],
+              env: { GITHUB_PERSONAL_ACCESS_TOKEN: vals.GITHUB_PERSONAL_ACCESS_TOKEN }
+            };
+          } else if (server.id === "postgres") {
+            vals.connectionString = serverParamValues["postgres_connectionString"] || "postgresql://localhost:5432/mydb";
+            config.mcpServers.postgres = {
+              command: "npx",
+              args: ["-y", "@modelcontextprotocol/server-postgres", vals.connectionString]
+            };
+          } else if (server.id === "slack") {
+            vals.SLACK_BOT_TOKEN = serverParamValues["slack_SLACK_BOT_TOKEN"] || "YOUR_SLACK_BOT_TOKEN";
+            config.mcpServers.slack = {
+              command: "npx",
+              args: ["-y", "@modelcontextprotocol/server-slack"],
+              env: { SLACK_BOT_TOKEN: vals.SLACK_BOT_TOKEN }
+            };
+          } else if (server.id === "brave-search") {
+            vals.BRAVE_API_KEY = serverParamValues["brave-search_BRAVE_API_KEY"] || "YOUR_BRAVE_API_KEY";
+            config.mcpServers["brave-search"] = {
+              command: "npx",
+              args: ["-y", "@modelcontextprotocol/server-brave-search"],
+              env: { BRAVE_API_KEY: vals.BRAVE_API_KEY }
+            };
+          } else if (server.id === "filesystem") {
+            vals.allowedDirectories = serverParamValues["filesystem_allowedDirectories"] || "";
+            const dirs = vals.allowedDirectories ? vals.allowedDirectories.split(",") : [];
+            config.mcpServers.filesystem = {
+              command: "npx",
+              args: ["-y", "@modelcontextprotocol/server-filesystem", ...dirs]
+            };
+          } else if (server.id === "kite") {
+            config.mcpServers.kite = {
+              command: "npx",
+              args: ["-y", "mcp-remote", "https://mcp.kite.trade/mcp"]
+            };
+          } else {
+            config.mcpServers[server.id] = {
+              command: "npx",
+              args: ["-y", `@modelcontextprotocol/server-${server.id}`]
+            };
+          }
+        }
+      });
+      
+      if (!hasAny) {
+        jsonPreview.textContent = `{\n  "mcpServers": {}\n}`;
+        return;
+      }
+      
+      const rawString = JSON.stringify(config, null, 2);
+      jsonPreview.innerHTML = highlightJSON(rawString);
+    }
+
+    // Show active Toast alerts
+    function showToast(message) {
+      if (!toast) return;
+      toast.textContent = message;
+      toast.classList.add("active");
+      setTimeout(() => {
+        toast.classList.remove("active");
+      }, 2500);
+    }
+
+    // Copy utilities
+    window.copyText = function(elementId, successMessage) {
+      const element = document.getElementById(elementId);
+      if (!element) return;
+      const text = element.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(successMessage);
+      }).catch(() => {
+        alert("Failed to copy text. Please select and copy manually.");
+      });
+    };
+
+    // Switch page view between tabs
+    function switchTab(tabName) {
+      activeTab = tabName;
+      
+      pageTabs.forEach(btn => {
+        if (btn.dataset.tab === tabName) {
+          btn.classList.add("active");
+          btn.setAttribute("aria-selected", "true");
+        } else {
+          btn.classList.remove("active");
+          btn.setAttribute("aria-selected", "false");
+        }
+      });
+      
+      tabViews.forEach(view => {
+        if (view.id === `view-${tabName}`) {
+          view.classList.add("active");
+        } else {
+          view.classList.remove("active");
+        }
+      });
+      
+      if (tabName === "servers") {
+        searchInput.placeholder = "Search servers (e.g. Postgres, Slack, Kite...)";
+        searchInput.style.display = "block";
+        document.querySelector(".search-icon").style.display = "block";
+      } else if (tabName === "learning") {
+        searchInput.placeholder = "Search learning paths, courses, videos...";
+        searchInput.style.display = "block";
+        document.querySelector(".search-icon").style.display = "block";
+      } else {
+        searchInput.style.display = "none";
+        document.querySelector(".search-icon").style.display = "none";
+      }
+
+      searchInput.value = "";
+      searchQuery = "";
+      
+      renderServers();
+      renderResources();
+    }
+
+    // Setup DOM event listeners
+    function setupEventListeners() {
+      pageTabs.forEach(btn => {
+        btn.addEventListener("click", () => {
+          switchTab(btn.dataset.tab);
+        });
+      });
+
+      // Keyboard arrow navigation for tablist
+      const tabsContainer = document.querySelector('.page-tabs');
+      if (tabsContainer) {
+        tabsContainer.addEventListener('keydown', (e) => {
+          const activeTabElement = document.activeElement;
+          if (!activeTabElement.classList.contains('page-tab')) return;
+          
+          const tabs = Array.from(pageTabs);
+          let index = tabs.indexOf(activeTabElement);
+          
+          if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+            index = (index + 1) % tabs.length;
+            tabs[index].focus();
+            tabs[index].click();
+            e.preventDefault();
+          } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+            index = (index - 1 + tabs.length) % tabs.length;
+            tabs[index].focus();
+            tabs[index].click();
+            e.preventDefault();
+          }
+        });
+      }
+
+      tabLinks.forEach(link => {
+        link.addEventListener("click", (e) => {
+          // Allow routing correctly back to section if dynamic hash is used
+          switchTab("servers");
+        });
+      });
+
+      searchInput.addEventListener("input", (e) => {
+        searchQuery = e.target.value;
+        if (activeTab === "servers") {
+          currentPage = 1;
+          renderServers();
+        } else if (activeTab === "learning") {
+          renderResources();
+        }
+      });
+      
+      if (categoryFilters) {
+        categoryFilters.addEventListener("click", (e) => {
+          if (e.target.classList.contains("filter-btn")) {
+            document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
+            e.target.classList.add("active");
+            
+            currentCategory = e.target.dataset.category;
+            currentPage = 1;
+            renderServers();
+          }
+        });
+      }
+
+      // Layout toggles event listeners
+      const layoutToggles = document.getElementById("layout-toggles");
+      if (layoutToggles) {
+        layoutToggles.addEventListener("click", (e) => {
+          const btn = e.target.closest(".layout-btn");
+          if (btn) {
+            document.querySelectorAll(".layout-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            activeLayout = btn.dataset.layout;
+            renderServers();
+          }
+        });
+      }
+
+      costBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          costBtns.forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          costFilter = btn.dataset.cost;
+          renderResources();
+        });
+      });
+
+      if (resourceSort) {
+        resourceSort.addEventListener("change", (e) => {
+          sortBy = e.target.value;
+          renderResources();
+        });
+      }
+
+      if (resourceCategorySelect) {
+        resourceCategorySelect.addEventListener("change", (e) => {
+          resourceCategoryFilter = e.target.value;
+          renderResources();
+        });
+      }
+
+      if (resourceLevelSelect) {
+        resourceLevelSelect.addEventListener("change", (e) => {
+          resourceLevelFilter = e.target.value;
+          renderResources();
+        });
+      }
+
+      if (validatorTextarea) {
+        validatorTextarea.addEventListener("input", (e) => {
+          validateConfigJSON(e.target.value);
+        });
+      }
+
+      if (btnLoadSample) {
+        btnLoadSample.addEventListener("click", () => {
+          const sampleCode = `{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": ""
+      }
+    },
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"]
+    }
+  }
+}`;
+          validatorTextarea.value = sampleCode;
+          validateConfigJSON(sampleCode);
+        });
+      }
+
+      if (copyConfigBtn) {
+        copyConfigBtn.addEventListener("click", () => {
+          const tempElement = document.createElement("div");
+          tempElement.innerHTML = jsonPreview.innerHTML;
+          const cleanText = tempElement.textContent;
+          navigator.clipboard.writeText(cleanText).then(() => {
+            showToast("Config JSON copied to clipboard!");
+          });
+        });
+      }
+
+      const btnCopyCode = document.querySelector(".btn-copy-code");
+      if (btnCopyCode) {
+        btnCopyCode.addEventListener("click", () => {
+          const targetId = btnCopyCode.dataset.copyTarget;
+          const codeText = document.getElementById(targetId).textContent;
+          navigator.clipboard.writeText(codeText).then(() => {
+            showToast("Code snippet copied!");
+          });
+        });
+      }
+    }
+
+    // Initialize on page load
+    window.addEventListener("DOMContentLoaded", init);
+  </script>
+</Layout>

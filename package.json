@@ -4,9 +4,15 @@
   "type": "module",
   "description": "MCP Hub portal and AWS Lambda automation utilities.",
   "scripts": {
-    "validate": "node validate.js"
+    "validate": "node validate.js",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^6.4.6",
     "nodemailer": "^6.9.13"
   }
 }

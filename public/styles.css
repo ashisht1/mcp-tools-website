@@ -1249,3 +1249,287 @@ footer {
   box-shadow: 0 0 0 4px rgba(0, 242, 254, 0.4), 0 4px 15px rgba(0, 242, 254, 0.25);
 }
 
+/* Layout Toggles and List View Styles */
+.layout-btn:hover,
+.layout-btn.active {
+  background: rgba(0, 242, 254, 0.08) !important;
+  color: var(--accent-cyan) !important;
+  border-color: var(--accent-cyan) !important;
+}
+
+.server-grid.list-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.server-grid.list-layout .server-card {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.server-grid.list-layout .server-card:hover {
+  transform: translateY(-2px);
+}
+
+.server-grid.list-layout .server-card .card-top {
+  margin-bottom: 0;
+  flex: 1;
+  min-width: 220px;
+}
+
+.server-grid.list-layout .server-card .card-desc {
+  margin-bottom: 0;
+  flex: 2;
+  min-width: 300px;
+  flex-grow: 1;
+}
+
+.server-grid.list-layout .server-card .card-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1.5;
+  min-width: 250px;
+  margin-top: 0;
+}
+
+.server-grid.list-layout .server-card .card-install {
+  margin-bottom: 0;
+  flex-grow: 1;
+}
+
+.server-grid.list-layout .server-card .card-footer {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex: 0.8;
+  min-width: 120px;
+}
+
+/* Responsive List View Layout */
+@media (max-width: 992px) {
+  .server-grid.list-layout .server-card {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .server-grid.list-layout .server-card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 16px !important;
+  }
+  .server-grid.list-layout .server-card .card-top,
+  .server-grid.list-layout .server-card .card-desc,
+  .server-grid.list-layout .server-card .card-actions,
+  .server-grid.list-layout .server-card .card-footer {
+    flex: none !important;
+    min-width: 0 !important;
+    align-items: stretch !important;
+    text-align: left !important;
+  }
+  .server-grid.list-layout .server-card .card-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding-top: 12px !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+  }
+}
+
+/* Pagination Control Styles */
+.pagination-btn {
+  background: rgba(20, 27, 41, 0.75);
+  border: 1px solid var(--card-border);
+  color: var(--text-secondary);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  transition: var(--transition-smooth);
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: rgba(0, 242, 254, 0.08);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+.pagination-btn.active {
+  background: linear-gradient(135deg, rgba(79, 172, 254, 0.15) 0%, rgba(0, 242, 254, 0.15) 100%);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.15);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Floating Feedback Button */
+.floating-feedback-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-cyan) 100%);
+  color: #07090e;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 20px;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 20px rgba(0, 242, 254, 0.3);
+  z-index: 900;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.floating-feedback-btn:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 242, 254, 0.5);
+}
+
+.floating-feedback-btn .btn-icon {
+  font-size: 1.1rem;
+}
+
+@media (max-width: 576px) {
+  .floating-feedback-btn {
+    bottom: 16px;
+    right: 16px;
+    padding: 12px;
+  }
+  .floating-feedback-btn span:not(.btn-icon) {
+    display: none;
+  }
+}
+
+/* Screenshot Upload Zone */
+.screenshot-upload-zone {
+  border: 2px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 24px 16px;
+  text-align: center;
+  background: rgba(7, 9, 14, 0.4);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.screenshot-upload-zone:hover,
+.screenshot-upload-zone.dragover {
+  border-color: var(--accent-cyan);
+  background: rgba(0, 242, 254, 0.05);
+}
+
+.screenshot-upload-zone input[type="file"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.upload-icon {
+  font-size: 1.6rem;
+  display: block;
+}
+
+.upload-text {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+
+/* Screenshot Preview Container */
+.screenshot-preview-container {
+  position: relative;
+  margin-top: 10px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  background: rgba(4, 6, 10, 0.8);
+  padding: 10px;
+  max-height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.screenshot-preview-container img {
+  max-width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.screenshot-preview-remove {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(239, 68, 68, 0.85);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: var(--transition-smooth);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.screenshot-preview-remove:hover {
+  background: #ef4444;
+  transform: scale(1.1);
+}
+
+/* Button Spinner Animation */
+.btn-spinner {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-spinner::after {
+  content: "";
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: button-spin 0.6s linear infinite;
+}
+
+@keyframes button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+

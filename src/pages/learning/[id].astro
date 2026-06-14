@@ -1,0 +1,156 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import data from '../../../data.json';
+
+export async function getStaticPaths() {
+  return data.learningResources.map(res => ({
+    params: { id: res.id },
+    props: { res }
+  }));
+}
+
+const { res } = Astro.props;
+
+const categoryMap: Record<string, string> = {
+  "llm-fundamentals": "LLM Fundamentals",
+  "agent-orchestration": "Agent Orchestration",
+  "custom-mcp": "Custom MCP Dev"
+};
+
+const categoryTitle = categoryMap[res.courseCategory] || res.courseCategory;
+const priceText = res.cost === "free" ? "Free" : `$${res.price.toFixed(2)}`;
+const priceClass = res.cost === "free" ? "free" : "paid";
+
+// Dynamic JSON-LD Schema
+let schemaType = "CreativeWork";
+if (res.type === "course") {
+  schemaType = "Course";
+} else if (res.type === "video") {
+  schemaType = "VideoObject";
+}
+
+const schemaJson: Record<string, any> = {
+  "@context": "https://schema.org",
+  "@type": schemaType,
+  "name": res.title,
+  "description": res.description,
+  "author": {
+    "@type": "Person",
+    "name": res.author
+  },
+  "educationalLevel": res.level
+};
+
+if (res.type === "course") {
+  schemaJson.courseCode = res.id;
+  schemaJson.provider = {
+    "@type": "Organization",
+    "name": res.author
+  };
+}
+---
+
+<Layout
+  title={`${res.title} | Learning Resources | MCP Hub`}
+  description={`Learn Model Context Protocol (MCP) using the tutorial: ${res.title} by ${res.author}. Cost: ${priceText}, Level: ${res.level}.`}
+  canonicalUrl={`https://mcptools.dev/learning/${res.id}`}
+  ogType="article"
+>
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json" set:html={JSON.stringify(schemaJson)} />
+
+  <article class="container" style="padding-top: 40px; padding-bottom: 80px; min-height: 80vh;">
+    <!-- Breadcrumbs -->
+    <div class="breadcrumbs" style="margin-bottom: 24px; font-size: 0.85rem; color: var(--text-secondary); display: flex; gap: 8px;">
+      <a href="/" style="color: var(--accent-blue); text-decoration: none;">Home</a>
+      <span aria-hidden="true">&gt;</span>
+      <a href="/#view-learning" style="color: var(--accent-blue); text-decoration: none;">Learning</a>
+      <span aria-hidden="true">&gt;</span>
+      <span style="color: var(--text-muted);">{res.title}</span>
+    </div>
+
+    <!-- Details Grid -->
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px; align-items: start;" class="details-grid">
+      <!-- Main Content (Left) -->
+      <div style="display: flex; flex-direction: column; gap: 32px;">
+        <div class="glass-panel" style="padding: 40px;">
+          <!-- Resource Header -->
+          <div style="margin-bottom: 24px;">
+            <div style="display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
+              <span class="resource-badge" style="background: rgba(79, 172, 254, 0.1); color: var(--accent-blue); font-size: 0.75rem; font-weight: 600; padding: 4px 12px; border-radius: 100px; border: 1px solid rgba(79, 172, 254, 0.2);">{res.type}</span>
+              <span class="level-badge" style="background: rgba(255, 255, 255, 0.05); color: var(--text-secondary); font-size: 0.75rem; font-weight: 500; padding: 4px 12px; border-radius: 100px; border: 1px solid var(--card-border);">{res.level}</span>
+              <span class="category-badge" style="background: rgba(195, 232, 141, 0.1); color: #c3e88d; font-size: 0.75rem; font-weight: 500; padding: 4px 12px; border-radius: 100px; border: 1px solid rgba(195, 232, 141, 0.2);">{categoryTitle}</span>
+              {res.badge && <span class="badge" style="background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%); color: #000; font-size: 0.75rem; font-weight: 600; padding: 4px 12px; border-radius: 100px; margin-bottom: 0;">{res.badge}</span>}
+            </div>
+            
+            <h1 style="font-size: 2.2rem; font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #fff; margin: 0 0 16px 0; line-height: 1.2;">
+              {res.title}
+            </h1>
+            
+            <div style="font-size: 0.95rem; color: var(--text-secondary);">
+              Created by <strong>{res.author}</strong>
+            </div>
+          </div>
+
+          <hr style="border: none; border-top: 1px solid var(--card-border); margin: 24px 0;" />
+
+          <!-- Description -->
+          <h2 style="font-size: 1.25rem; color: var(--text-secondary); font-family: 'Space Grotesk', sans-serif; margin-bottom: 12px;">Description</h2>
+          <p style="font-size: 1.1rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 0;">
+            {res.description}
+          </p>
+        </div>
+      </div>
+
+      <!-- Sidebar Metadata (Right) -->
+      <div class="glass-panel" style="padding: 30px; display: flex; flex-direction: column; gap: 24px;">
+        <h3 style="font-size: 1.15rem; font-family: 'Space Grotesk', sans-serif; margin: 0; color: #fff;">Resource Info</h3>
+        
+        <div>
+          <span style="font-size: 0.8rem; color: var(--text-muted); display: block; text-transform: uppercase; margin-bottom: 4px;">Rating & Reviews</span>
+          <div style="display: flex; align-items: center; gap: 8px;" aria-label={`Rating: ${res.rating.toFixed(1)} out of 5 stars based on ${res.reviewCount} reviews`}>
+            <strong style="font-size: 1.2rem; color: #fff;" aria-hidden="true">{res.rating.toFixed(1)}</strong>
+            <span style="color: #ffb86c; font-size: 1.1rem;" aria-hidden="true">
+              {"★".repeat(Math.floor(res.rating)) + "☆".repeat(5 - Math.floor(res.rating))}
+            </span>
+            <span style="font-size: 0.85rem; color: var(--text-muted);" aria-hidden="true">({res.reviewCount})</span>
+          </div>
+        </div>
+
+        <div>
+          <span style="font-size: 0.8rem; color: var(--text-muted); display: block; text-transform: uppercase; margin-bottom: 4px;">Price</span>
+          <strong style="font-size: 1.2rem; color: #fff;"><span class={`price-tag ${priceClass}`}>{priceText}</span></strong>
+        </div>
+
+        <div>
+          <span style="font-size: 0.8rem; color: var(--text-muted); display: block; text-transform: uppercase; margin-bottom: 4px;">Level</span>
+          <strong style="font-size: 1.1rem; color: #fff; text-transform: capitalize;">{res.level}</strong>
+        </div>
+
+        <div>
+          <span style="font-size: 0.8rem; color: var(--text-muted); display: block; text-transform: uppercase; margin-bottom: 4px;">Topic</span>
+          <strong style="font-size: 1.1rem; color: #fff;">{categoryTitle}</strong>
+        </div>
+
+        <hr style="border: none; border-top: 1px solid var(--card-border); margin: 8px 0;" />
+
+        <!-- Actions -->
+        <a href={res.url} target="_blank" rel="noopener sponsored" class="btn btn-primary text-center" style="display: block; text-decoration: none; font-size: 0.95rem; font-weight: 600;">
+          Visit Resource ↗
+        </a>
+
+        <a href="/#view-learning" class="btn btn-secondary text-center" style="display: block; text-decoration: none; font-size: 0.95rem;">
+          &larr; Back to Learning
+        </a>
+      </div>
+    </div>
+  </article>
+</Layout>
+
+<style>
+  @media (max-width: 768px) {
+    .details-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>

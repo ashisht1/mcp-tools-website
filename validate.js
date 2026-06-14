@@ -26,10 +26,9 @@ function check(label, success, errorMsg = "") {
 
 // 1. Verify file existence
 const filesToCheck = [
-  'index.html',
-  'styles.css',
-  'app.js',
-  'data.json',
+  'src/pages/index.astro',
+  'public/styles.css',
+  'public/data.json',
   'lambda-updater.js'
 ];
 
@@ -41,7 +40,7 @@ filesToCheck.forEach(file => {
 // 2. Validate data.json format
 let dataObj = null;
 try {
-  const dataPath = path.join(baseDir, 'data.json');
+  const dataPath = path.join(baseDir, 'public/data.json');
   if (fs.existsSync(dataPath)) {
     const rawData = fs.readFileSync(dataPath, 'utf-8');
     dataObj = JSON.parse(rawData);
@@ -91,7 +90,7 @@ if (dataObj) {
 }
 
 // 4. Parse JS files for Syntax Errors
-const jsFiles = ['app.js', 'lambda-updater.js'];
+const jsFiles = ['lambda-updater.js'];
 jsFiles.forEach(jsFile => {
   const filePath = path.join(baseDir, jsFile);
   if (fs.existsSync(filePath)) {

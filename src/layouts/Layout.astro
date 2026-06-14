@@ -1,0 +1,472 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  canonicalUrl?: string;
+  ogType?: string;
+}
+
+const { title, description, canonicalUrl, ogType = "website" } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  
+  <!-- Canonical & OG Tags -->
+  {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content={ogType} />
+  {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+  <meta property="og:site_name" content="MCP Hub" />
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <!-- Skip link for keyboard navigation -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Animated Glowing Background Dots & Lines -->
+  <div class="bg-grid-overlay"></div>
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="header-container container">
+      <a href="/" class="logo" style="text-decoration: none;">
+        <span class="logo-icon" role="img" aria-hidden="true">⚡</span>
+        <span class="logo-text">MCP<span class="text-gradient">Hub</span></span>
+      </a>
+      <nav>
+        <a href="/#servers-explorer" class="nav-link tab-nav-link" id="nav-explore-servers">Explore Servers</a>
+        <a href="/#config-generator" class="nav-link tab-nav-link" id="nav-config-generator">Config Generator</a>
+        <a href="/#quickstart" class="nav-link tab-nav-link" id="nav-quickstart">Build Server</a>
+        <a href="#submit" class="btn btn-secondary submit-btn">Submit Server</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <slot />
+  </main>
+
+  <!-- Submit Server Modal -->
+  <div class="modal-overlay" id="submit-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-content glass-panel">
+      <button class="modal-close" id="modal-close-btn" aria-label="Close modal"><span aria-hidden="true">&times;</span></button>
+      <h2 id="modal-title">Submit Your <span class="text-gradient">MCP Server</span></h2>
+      <p class="modal-subtitle">Share your custom server with the developer community.</p>
+      
+      <form class="submit-form" id="submit-form" onsubmit="event.preventDefault(); alert('Success! Your submission is in review.'); document.getElementById('submit-modal').classList.remove('active');">
+        <div class="form-group">
+          <label for="tool-name">Server Name *</label>
+          <input type="text" id="tool-name" placeholder="e.g. Postgres MCP Server" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="tool-category">Category *</label>
+            <select id="tool-category" required>
+              <option value="databases">Databases</option>
+              <option value="apis">APIs & Chat</option>
+              <option value="search">Search & Web</option>
+              <option value="utilities">Utilities</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="tool-repo">GitHub Repository *</label>
+            <input type="url" id="tool-repo" placeholder="https://github.com/username/repo" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="tool-command">Run Command / Command Line *</label>
+          <input type="text" id="tool-command" placeholder="npx -y @modelcontextprotocol/server-postgres" required>
+        </div>
+        <div class="form-group">
+          <label for="tool-desc">Short Description *</label>
+          <textarea id="tool-desc" rows="3" placeholder="Provide a brief explanation of the capabilities and tools exposed by this server." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Submit for Review</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast-notification" role="status" aria-live="polite">Configuration copied to clipboard!</div>
+
+  <!-- Feedback Modal -->
+  <div class="modal-overlay" id="feedback-modal" role="dialog" aria-modal="true" aria-labelledby="feedback-modal-title">
+    <div class="modal-content glass-panel">
+      <button class="modal-close" id="feedback-modal-close-btn" aria-label="Close modal"><span aria-hidden="true">&times;</span></button>
+      <h2 id="feedback-modal-title">Send <span class="text-gradient">Feedback</span></h2>
+      <p class="modal-subtitle">Have a suggestion or found a bug? Let us know!</p>
+      
+      <form class="submit-form" id="feedback-form">
+        <div class="form-group">
+          <label for="feedback-email">Your Email (Optional)</label>
+          <input type="email" id="feedback-email" placeholder="e.g. you@example.com">
+        </div>
+        <div class="form-group">
+          <label for="feedback-message">Message *</label>
+          <textarea id="feedback-message" rows="4" placeholder="Describe your issue or feedback in detail..." required></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>Attach Screenshot (Optional, Max 3MB)</label>
+          <div class="screenshot-upload-zone" id="screenshot-upload-zone">
+            <span class="upload-icon" role="img" aria-hidden="true">📸</span>
+            <span class="upload-text" id="upload-status-text">Click or drag screenshot here (PNG, JPG)</span>
+            <input type="file" id="feedback-screenshot" accept="image/png, image/jpeg, image/jpg" aria-label="Upload screenshot">
+          </div>
+          <div class="screenshot-preview-container" id="screenshot-preview-container" style="display: none;">
+            <img id="screenshot-preview-img" src="" alt="Screenshot preview">
+            <button type="button" class="screenshot-preview-remove" id="screenshot-preview-remove" aria-label="Remove screenshot">&times;</button>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary btn-block" id="feedback-submit-btn">
+          <span class="btn-text">Send Feedback</span>
+          <span class="btn-spinner" style="display: none;">Sending...</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Floating Feedback Trigger Button -->
+  <button class="floating-feedback-btn" id="floating-feedback-btn" aria-haspopup="dialog" aria-controls="feedback-modal" aria-label="Open feedback form">
+    <span class="btn-icon" role="img" aria-hidden="true">💬</span>
+    <span>Feedback</span>
+  </button>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-content text-center">
+      <p>&copy; 2026 MCP Hub Registry. Built for AI engineers and developers.</p>
+      <div class="footer-links">
+        <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">Protocol Specification</a> &bull; 
+        <a href="https://github.com/modelcontextprotocol" target="_blank" rel="noopener">Official SDKs</a>
+      </div>
+    </div>
+  </footer>
+
+  <script is:inline>
+    // Global modal scripts that apply everywhere (since submit-btn is in header)
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Submit Server Modal Logic
+      const submitBtn = document.querySelector(".submit-btn");
+      const submitModal = document.getElementById("submit-modal");
+      const modalCloseBtn = document.getElementById("modal-close-btn");
+      let previousActiveElement = null;
+
+      function openModal() {
+        previousActiveElement = document.activeElement;
+        submitModal.classList.add("active");
+        
+        // Focus the first form input inside the modal
+        const firstInput = submitModal.querySelector('input, select, textarea, button');
+        if (firstInput) {
+          setTimeout(() => firstInput.focus(), 100);
+        }
+        
+        document.addEventListener('keydown', handleKeyDown);
+      }
+
+      function closeModal() {
+        submitModal.classList.remove("active");
+        document.removeEventListener('keydown', handleKeyDown);
+        if (previousActiveElement) {
+          previousActiveElement.focus();
+        }
+      }
+
+      function handleKeyDown(e) {
+        if (e.key === 'Escape') {
+          closeModal();
+          return;
+        }
+        
+        if (e.key === 'Tab') {
+          const focusableElements = submitModal.querySelectorAll('input, select, textarea, button, [tabindex="0"]');
+          if (focusableElements.length === 0) return;
+          const firstElement = focusableElements[0];
+          const lastElement = focusableElements[focusableElements.length - 1];
+          
+          if (e.shiftKey) { // Shift + Tab
+            if (document.activeElement === firstElement) {
+              lastElement.focus();
+              e.preventDefault();
+            }
+          } else { // Tab
+            if (document.activeElement === lastElement) {
+              firstElement.focus();
+              e.preventDefault();
+            }
+          }
+        }
+      }
+
+      if (submitBtn && submitModal) {
+        submitBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          openModal();
+        });
+      }
+
+      if (modalCloseBtn && submitModal) {
+        modalCloseBtn.addEventListener("click", () => {
+          closeModal();
+        });
+      }
+
+      if (submitModal) {
+        submitModal.addEventListener("click", (e) => {
+          if (e.target === submitModal) {
+            closeModal();
+          }
+        });
+      }
+
+      // 2. Feedback Modal Logic
+      const feedbackBtn = document.getElementById("floating-feedback-btn");
+      const feedbackModal = document.getElementById("feedback-modal");
+      const feedbackCloseBtn = document.getElementById("feedback-modal-close-btn");
+      const feedbackForm = document.getElementById("feedback-form");
+      const screenshotInput = document.getElementById("feedback-screenshot");
+      const uploadZone = document.getElementById("screenshot-upload-zone");
+      const previewContainer = document.getElementById("screenshot-preview-container");
+      const previewImg = document.getElementById("screenshot-preview-img");
+      const previewRemove = document.getElementById("screenshot-preview-remove");
+      const feedbackSubmitBtn = document.getElementById("feedback-submit-btn");
+      const feedbackBtnText = feedbackSubmitBtn ? feedbackSubmitBtn.querySelector(".btn-text") : null;
+      const feedbackBtnSpinner = feedbackSubmitBtn ? feedbackSubmitBtn.querySelector(".btn-spinner") : null;
+      const toast = document.getElementById("toast-notification");
+      
+      let screenshotBase64 = "";
+      let previousFeedbackActiveElement = null;
+
+      function showToast(message, isSuccess = true) {
+        if (toast) {
+          toast.textContent = message;
+          toast.style.background = isSuccess ? "#10b981" : "#ef4444";
+          toast.classList.add("active");
+          setTimeout(() => {
+            toast.classList.remove("active");
+          }, 3000);
+        }
+      }
+
+      function openFeedback() {
+        previousFeedbackActiveElement = document.activeElement;
+        feedbackModal.classList.add("active");
+        
+        // Focus the first form input inside the modal
+        const firstInput = feedbackModal.querySelector('input, textarea, button');
+        if (firstInput) {
+          setTimeout(() => firstInput.focus(), 100);
+        }
+        
+        document.addEventListener('keydown', handleFeedbackKeyDown);
+      }
+
+      function closeFeedback() {
+        feedbackModal.classList.remove("active");
+        document.removeEventListener('keydown', handleFeedbackKeyDown);
+        if (previousFeedbackActiveElement) {
+          previousFeedbackActiveElement.focus();
+        }
+      }
+
+      function handleFeedbackKeyDown(e) {
+        if (e.key === 'Escape') {
+          closeFeedback();
+          return;
+        }
+        
+        if (e.key === 'Tab') {
+          const focusable = feedbackModal.querySelectorAll('input, textarea, button, [tabindex="0"]');
+          if (focusable.length === 0) return;
+          const first = focusable[0];
+          const last = focusable[focusable.length - 1];
+          
+          if (e.shiftKey) {
+            if (document.activeElement === first) {
+              last.focus();
+              e.preventDefault();
+            }
+          } else {
+            if (document.activeElement === last) {
+              first.focus();
+              e.preventDefault();
+            }
+          }
+        }
+      }
+
+      if (feedbackBtn && feedbackModal) {
+        feedbackBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          openFeedback();
+        });
+      }
+
+      if (feedbackCloseBtn && feedbackModal) {
+        feedbackCloseBtn.addEventListener("click", () => {
+          closeFeedback();
+        });
+      }
+
+      if (feedbackModal) {
+        feedbackModal.addEventListener("click", (e) => {
+          if (e.target === feedbackModal) {
+            closeFeedback();
+          }
+        });
+      }
+
+      // Drag and drop events for upload zone
+      if (uploadZone) {
+        ['dragenter', 'dragover'].forEach(eventName => {
+          uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+          }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+          uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+          }, false);
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+          const dt = e.dataTransfer;
+          const files = dt.files;
+          if (files.length) {
+            if (screenshotInput) {
+              screenshotInput.files = files;
+            }
+            handleFile(files[0]);
+          }
+        });
+      }
+
+      if (screenshotInput) {
+        screenshotInput.addEventListener("change", (e) => {
+          if (e.target.files && e.target.files[0]) {
+            handleFile(e.target.files[0]);
+          }
+        });
+      }
+
+      function handleFile(file) {
+        // Validate type
+        if (!file.type.match('image.*')) {
+          showToast("Please select an image file (PNG, JPG)", false);
+          if (screenshotInput) screenshotInput.value = "";
+          return;
+        }
+        
+        // Validate size (< 3MB)
+        if (file.size > 3 * 1024 * 1024) {
+          showToast("File size too large. Maximum size is 3MB", false);
+          if (screenshotInput) screenshotInput.value = "";
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          screenshotBase64 = e.target.result;
+          if (previewImg && previewContainer && uploadZone) {
+            previewImg.src = screenshotBase64;
+            previewContainer.style.display = "block";
+            uploadZone.style.display = "none";
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+
+      if (previewRemove) {
+        previewRemove.addEventListener("click", () => {
+          screenshotBase64 = "";
+          if (screenshotInput) screenshotInput.value = "";
+          if (previewContainer && uploadZone) {
+            previewContainer.style.display = "none";
+            uploadZone.style.display = "block";
+          }
+        });
+      }
+
+      // Submit feedback form
+      if (feedbackForm) {
+        feedbackForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          
+          const emailVal = document.getElementById("feedback-email").value.trim();
+          const messageVal = document.getElementById("feedback-message").value.trim();
+          
+          if (!messageVal) return;
+
+          // Set loading state
+          if (feedbackSubmitBtn && feedbackBtnText && feedbackBtnSpinner) {
+            feedbackSubmitBtn.disabled = true;
+            feedbackBtnText.style.display = "none";
+            feedbackBtnSpinner.style.display = "inline-block";
+          }
+
+          try {
+            const response = await fetch("/api/feedback", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                email: emailVal,
+                message: messageVal,
+                screenshot: screenshotBase64
+              })
+            });
+
+            const data = await response.json();
+            
+            if (response.ok && data.success) {
+              showToast("Feedback sent successfully!", true);
+              feedbackForm.reset();
+              // Reset screenshot preview
+              screenshotBase64 = "";
+              if (previewContainer && uploadZone) {
+                previewContainer.style.display = "none";
+                uploadZone.style.display = "block";
+              }
+              closeFeedback();
+            } else {
+              showToast(data.error || "Failed to send feedback.", false);
+            }
+          } catch (err) {
+            console.error("Error submitting feedback:", err);
+            showToast("Network error. Please try again later.", false);
+          } finally {
+            // Reset loading state
+            if (feedbackSubmitBtn && feedbackBtnText && feedbackBtnSpinner) {
+              feedbackSubmitBtn.disabled = false;
+              feedbackBtnText.style.display = "inline-block";
+              feedbackBtnSpinner.style.display = "none";
+            }
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

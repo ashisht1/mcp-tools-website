@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mcptools.dev/sitemap-index.xml

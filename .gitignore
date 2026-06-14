@@ -4,3 +4,5 @@ node_modules/
 response.json
 *.log
 trust-policy.json
+.astro/
+dist/
