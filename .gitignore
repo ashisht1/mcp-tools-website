@@ -6,3 +6,6 @@ response.json
 trust-policy.json
 .astro/
 dist/
+.env
+.env.local
+.env.*
