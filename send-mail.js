@@ -2,14 +2,19 @@ import nodemailer from 'nodemailer';
 
 const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com";
 const smtpPort = parseInt(process.env.SMTP_PORT || "587", 10);
-const smtpUser = process.env.SMTP_USER || "tehri.ashish@gmail.com";
-const smtpPass = process.env.SMTP_PASS || "fbifnunkqdudmdxz";
+const smtpUser = process.env.SMTP_USER;
+const smtpPass = process.env.SMTP_PASS;
 
-const emailTo = process.argv[2] || "tehri.ashish@gmail.com";
+const emailTo = process.argv[2] || smtpUser || "tehri.ashish@gmail.com";
 const subject = process.argv[3] || "Weekly MCP Update Report";
 const htmlBody = process.argv[4] || "<h1>Weekly update completed</h1>";
 
 async function main() {
+  if (!smtpUser || !smtpPass) {
+    console.error("Error: SMTP_USER and SMTP_PASS environment variables are required.");
+    process.exit(1);
+  }
+
   const transporter = nodemailer.createTransport({
     host: smtpHost,
     port: smtpPort,

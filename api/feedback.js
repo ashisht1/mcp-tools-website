@@ -15,8 +15,13 @@ export default async function handler(req, res) {
 
     const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com";
     const smtpPort = parseInt(process.env.SMTP_PORT || "587", 10);
-    const smtpUser = process.env.SMTP_USER || "tehri.ashish@gmail.com";
-    const smtpPass = process.env.SMTP_PASS || "fbifnunkqdudmdxz";
+    const smtpUser = process.env.SMTP_USER;
+    const smtpPass = process.env.SMTP_PASS;
+
+    if (!smtpUser || !smtpPass) {
+      console.error("Error: SMTP_USER or SMTP_PASS environment variables are missing.");
+      return res.status(500).json({ error: "SMTP configuration is incomplete on the server." });
+    }
 
     const transporter = nodemailer.createTransport({
       host: smtpHost,
@@ -47,7 +52,7 @@ export default async function handler(req, res) {
 
     const mailOptions = {
       from: `"MCP Hub Feedback" <${smtpUser}>`,
-      to: "tehri.ashish@gmail.com",
+      to: process.env.FEEDBACK_RECIPIENT || smtpUser || "tehri.ashish@gmail.com",
       subject: `[mcptools.dev] New User Feedback`,
       html: `
         <div style="font-family: sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #e4e4e7; border-radius: 8px; padding: 24px;">
